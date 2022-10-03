@@ -238,6 +238,15 @@ def delete_tag(question_id, tag_id):
     cdh.delete_tag_from_tag(tag_id)
     return redirect(url_for('question', question_id=question_id))
 
+@app.route('/users')
+def users():
+    is_logged_in = True
+    if is_logged_in:
+        
+        return render_template('users.html', is_logged_in=is_logged_in)
+    else:
+        return redirect(url_for('list'))
+
 
 if __name__ == "__main__":
     app.run(
