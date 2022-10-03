@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ASK MATE</title>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
+</head>
+<body>
+
+<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+<button class="button-add-new-question"><a href="{{ url_for("add_question") }}">Add New Question</a></button></div>
+
+<form class="select" action="{{ url_for("list") }}" method="POST"></form>
+
+    <form action="{{ url_for("search") }}" method="GET">
+        <label for="search_phrase"></label>
+            <input type="search" placeholder="Search" id="search_phrase" name="search_phrase">
+            <button type="submit">Search</button>
+    </form>
+
+    <form action="{{ url_for("list") }}" method="POST">
+        <label>
+            <select name="sort_value">
+                <option value="id" HIDDEN>-------select-------</option>
+                <option value="title">title</option>
+                <option value="submission_time">submission time</option>
+                <option value="message">message</option>
+                <option value="view_number">number of views</option>
+                <option value="vote_number">number of votes</option>
+            </select>
+        </label>
+
+        <label>
+            <select name="sort_direction">
+                <option value="DESC" HIDDEN>----select----</option>
+                <option value="DESC">descending</option>
+                <option value="ASC">ascending</option>
+            </select>
+        </label>
+        <button class="Search" type="submit" value="submit">Sort</button>
+    </form>
+
+<div class="all-element-question" >
+    {% for item in question_list %}
+        <div class="title_request">
+        <a href="{{ url_for("question", question_id=item.id) }}"><a href="{{ url_for("increase_views", question_id=item.id) }}">
+            <div class="element">
+                <h3> {{ item.title }} </h3>
+                    {% if item.image != None %}
+                        <div class="space"><div class="'photo"><img class="image" src="{{ url_for('static', filename='images/' + item.image ) }}" alt="blabla" height="200"></div></div>
+                    {% else %}
+                        <div class="space"><div class="'photo"><img class="image" src="/static/images/BLANK_ICON.png" alt="blabla" height="200"></div></div>
+                    {% endif %}
+            <footer class="vote-list-html"> Question votes: {{ item.vote_number }}
+                <a class="upvote" href="{{ url_for('vote_on_question_up', question_id=item.id) }}"> <input type="submit" value=" ↑ " ></a>
+                <a class="downvote" href="{{ url_for('vote_on_question_down', question_id=item.id) }}"> <input type="submit" value=" ↓ "></a>
+                <div style="float: right"><div> Number of views: {{ item.view_number }} &nbsp&nbsp&nbsp </div></div>
+                <div style="float: right"><div> Submission time: {{ item.submission_time }} &nbsp&nbsp&nbsp </div></div>
+            </footer>
+            </div>
+        </a>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>

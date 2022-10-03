@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ADD QUESTION</title>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
+</head>
+<body>
+<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+<form enctype="multipart/form-data" action="{{ url_for("add_question") }}" method="POST">
+    <label for="">New question title</label>
+    <br>
+    <textarea name="title" id="" cols="30" rows="10"></textarea>
+    <br><br>
+    <label for="">Type your question</label>
+    <br>
+    <textarea name="message" id="" cols="30" rows="10"></textarea>
+    <br><br>
+    <input type="file" name="filename">
+    <br><br>
+    <button type="submit" value="Submit">Add a question</button>
+    <br>
+
+
+</form>
+</body>
+</html>

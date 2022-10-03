@@ -1,0 +1,152 @@
+body{
+    background: #e9eef2;
+    font-family: "Gill Sans", cursive;
+    font-size: 25px;
+}
+a {
+    text-decoration: none;
+    color: #2e424d;
+    text-align: left;
+}
+button{
+    background-color: #e9eef2;
+    border: 4px inset #fdae37; border-radius: 10px 10px 10px 10px;
+    color: #2e424d;
+    padding: 1px 3px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+button:hover{
+    background-color: #fdae37;
+    border: 4px inset #e9eef2; border-radius: 10px 10px 10px 10px;
+    color: #2e424d;
+    padding: 1px 3px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+.title{
+    background-color: rgb(209, 218, 220);
+    margin:-10px;
+    margin-bottom: 20px;
+    color: #2e424d;
+}
+
+.logo{
+    position: relative; left: 40px;
+}
+
+.upvote{
+    background: green;
+}
+
+.downvote{
+    background: red;
+}
+
+
+.button-add-new-question{
+    position: absolute;
+    right: 70px;
+    top: 40px;
+}
+
+.select{
+    margin: auto;
+    margin-left: 100px;
+
+}
+.all-element-question{
+    height: 600px;
+    width:1000px;
+    resize:both;
+    margin: auto;
+
+}
+.element{
+    height: auto;
+    background-color: #e9eef2;
+
+}
+.element:hover{
+    background-color: rgb(209, 218, 220);
+}
+.title_request{
+    padding:1px;
+    background-color: #e9eef2;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.vote-list-html{
+    font-size: 20px;
+    color: #2e424d;
+}
+.photo{
+    margin-top: 40px;
+}
+img{
+    max-width: 150px;
+    max-height: 100px;
+}
+.image{
+    border-radius: 10px;
+    border-style: solid;
+    border-width: thin;
+    border-color: #e9eef2;
+}
+
+.questions-id-table{
+    height: 600px;
+    width:1000px;
+    resize:both;
+    margin: auto;
+}
+
+.title-message{
+    color: #2e424d;
+}
+.tag{
+    font-size: 20px;
+    background-color: #c5ccd2;
+}
+
+.scroll-comments{
+    font-size: 15px;
+    width: 1000px;
+    height: 200px;
+    overflow: scroll;
+    background-color: rgb(209, 218, 220);
+}
+.button-in-comments{
+    float: right;
+}
+
+.comment-answer{
+    font-size: 15px;
+    width: 1000px;
+    height: 200px;
+    overflow: scroll;
+    background-color: rgb(209, 218, 220);
+}
+
+.button-delete-answer{
+    position: absolute; right: 500px;
+}
+.button-edit-answer{
+    position: absolute; right: 650px;
+}
+
+.vote{
+    position: absolute; right: 800px;
+}
+
+.space{
+    /*height: 130px;*/
+    margin-top: 15px;
+}
+

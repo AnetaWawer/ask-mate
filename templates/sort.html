@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Question list</title>
+
+</head>
+<body>
+<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+
+    <table>
+        <tr>
+            <td>submission_time</td>
+            <td>view_number</td>
+            <td>vote_number</td>
+            <td>title</td>
+            <td>message</td>
+        </tr>
+        {% for column in question_list %}
+       <tr>
+        <td>{{ column.submission_time }}</td>
+        <td>{{ column.view_number }}</td>
+        <td>{{ column.title }}</td>
+        <td>{{ column.message }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% for column in question_list|sort(attribute=order_by) %}
+</body>
+</html>
