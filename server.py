@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
+from data_handler import users_dh
 
 app = Flask(__name__)
 
@@ -242,8 +243,8 @@ def delete_tag(question_id, tag_id):
 def users():
     is_logged_in = True
     if is_logged_in:
-        
-        return render_template('users.html', is_logged_in=is_logged_in)
+        all_users = users_dh.get_all_users()
+        return render_template('users.html', is_logged_in=is_logged_in,all_users=all_users)
     else:
         return redirect(url_for('list'))
 
