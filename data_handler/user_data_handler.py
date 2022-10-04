@@ -16,25 +16,25 @@ def verify_password(plain_text_password, hashed_password):
 
 
 @database_common.connection_handler
-def add_logged_users(cursor, mail, password):
+def add_logged_users(cursor, email, password):
     sub_time = time.strftime("%Y-%m-%d %H:%M")
     query = f"""  
       INSERT INTO users (password, login, submission_time)
-      VALUES  ('{password}','{mail}', '{sub_time}') """
+      VALUES  ('{password}','{email}', '{sub_time}') """
     cursor.execute(query)
 
 
 @database_common.connection_handler
-def check_mail(logins):
-    mails = get_mails()
-    for mail in mails:
-        if mail['login'] == logins:
+def check_email(logins):
+    emails = get_emails()
+    for email in emails:
+        if email['login'] == logins:
             return False
     return True
 
 
 @database_common.connection_handler
-def get_mails(cursor):
+def get_emails(cursor):
     query = """ 
         SELECT * FROM users """
     cursor.execute(query)

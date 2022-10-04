@@ -1,15 +1,65 @@
-from flask import Flask, render_template, request, redirect, url_for
-
+from flask import Flask, render_template, request, redirect, url_for, session
+from data_handler import user_data_handler
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
+from data_handler import data_handler
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+app.secret_key ='secret string'
 
 
 @app.route("/")
 def to_list():
-    return redirect('/list')
+    return redirect(url_for('user_registration'))
+
+
+@app.route('/registration')
+def user_registration():
+    return render_template('registration.html')
+
+
+@app.route('/registration/list', methods=(['GET', 'POST']))
+def registration():
+    msg=''
+    if request.method == 'POST' and 'password' in request.form and 'email' in request.form:
+        password = request.form['password']
+        email = request.form['email']
+        # user_data_handler.get_emails()
+        user_data_handler.add_logged_users('email','password')
+    elif request.method == 'POST':
+        msg = 'Please fill out the form!'
+
+    return render_template('list.html', msg=msg, email=email, password=password)
+
+
+@app.route('/dashboard')
+def dashboard():
+    logged = session.get('logged', None)
+    email = session.get('email', None)
+
+    return render_template('list.html', email=email, logged=logged)
+
+@app.route('/registration', methods=(['GET', 'POST']))
+def logins():
+    message = ''
+    if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
+
+        session['logged'] = True
+        session['email'] = ['email']
+        return render_template('list.html')
+    else:
+        message = 'Incorrect email/password!'
+    return render_template('registration.html.html', message=message)
+
+
+@app.route('/logout')
+def logout():
+    session .pop('email')
+    session.pop('logged')
+    return redirect(url_for('registration'))
 
 
 @app.route('/list', methods=["GET", "POST"])
@@ -20,6 +70,7 @@ def list():
         sort_value = "id"
         sort_direction = """ASC"""
     question_list = qdh.get_question(sort_value, sort_direction)
+
     # question_list = dh.get_five_most_recent_questions()
     return render_template("list.html", question_list=question_list)
 
