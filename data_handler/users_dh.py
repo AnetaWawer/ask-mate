@@ -10,6 +10,13 @@ import database_common
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 @database_common.connection_handler
+def get_login_and_password(cursor):
+    query = """SELECT login, password FROM users"""
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
 def get_all_users(cursor):
     query = """ SELECT users.login,num_of_asked_questions, num_of_answers,num_of_comments,reputation, user_details.user_id
      FROM user_details
@@ -84,9 +91,29 @@ def get_user_id(cursor):
     cursor.execute(query)
     return cursor.fetchall()
 
+@database_common.connection_handler
+def get_user_id_in_questions_by_users_id(cursor, id):
+    query = f"""
+    SELECT user_id
+    FROM question
+    WHERE user_id = {id}
+    """
+    cursor.execute(query)
+    return cursor.fetchone()
 
 @database_common.connection_handler
-def reputation_for_questions_up(cursor, user_id ):
+def get_user_id_by_login(cursor, login):
+    query = """
+    SELECT id 
+    FROM users
+    WHERE login = %(login)s
+    """
+    cursor.execute(query, {"login": login})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def reputation_for_questions_up(cursor, user_id):
     query="""UPDATE user_details SET reputation = reputation + 5 WHERE user_id= %(user_id)s"""
     cursor.execute(query, {"user_id": user_id})
 
@@ -100,6 +127,12 @@ def reputation_for_questions_down(cursor, user_id ):
 def reputation_for_answers_up(cursor, user_id):
     query = """UPDATE user_details SET reputation = reputation + 10 WHERE user_id= %(user_id)s"""
     cursor.execute(query, {"user_id": user_id})
+
+@database_common.connection_handler
+def reputation_for_accepted_answer_up(cursor, user_id):
+    query = """UPDATE user_details SET reputation = reputation + 15 WHERE user_id= %(user_id)s"""
+    cursor.execute(query, {"user_id": user_id})
+
 
 @database_common.connection_handler
 def reputation_for_answers_down(cursor, user_id):

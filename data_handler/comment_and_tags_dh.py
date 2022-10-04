@@ -148,3 +148,11 @@ def delete_tag_from_tag(cursor, tag_id):
 
 
 
+
+@database_common.connection_handler
+def get_quantity_of_tags(cursor):
+    query = """SELECT  tag.name, count(tag_id) as quantity FROM public.question_tag
+INNER JOIN tag on tag.id = question_tag.tag_id
+GROUP BY tag_id, tag.name"""
+    cursor.execute(query)
+    return cursor.fetchall()
