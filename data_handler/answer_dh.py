@@ -66,3 +66,22 @@ def vote_on_answer(cursor, answer_id, vote):
         WHERE id = %(answer_id)s
             """
     return cursor.execute(query, {"answer_id": answer_id, 'vote': vote})
+
+@database_common.connection_handler
+def update_status_accept_answer(cursor, answer_id, value):
+    query = """
+        UPDATE answer
+        SET accept_answer = %(value)s
+        WHERE id = %(answer_id)s
+        """
+    return cursor.execute(query, {"answer_id": answer_id, 'value': value})
+
+# @database_common.connection_handler
+# def get_status_accept_answer(cursor, answer_id):
+#     query = """
+#         SELECT accept_answer
+#         FROM answer
+#         WHERE id = %(answer_id)s
+#     """
+#     cursor.execute(query, {"answer_id": answer_id})
+#     return cursor.fetchone()

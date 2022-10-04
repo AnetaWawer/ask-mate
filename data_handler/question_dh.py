@@ -47,7 +47,7 @@ def add_new_question(cursor, title, message, image):
 @database_common.connection_handler
 def get_question_by_id(cursor, question_id):
     query = """
-        SELECT id, submission_time, view_number, vote_number, title, message, image
+        SELECT id, submission_time, view_number, vote_number, title, message, image, user_id
         FROM question
         WHERE id = %(question_id)s"""
     cursor.execute(query, {'question_id': question_id})
@@ -131,5 +131,31 @@ def increase_number_of_views(cursor, question_id):
 
 
 
+
+
+
+
+
+@database_common.connection_handler
+def get_user_id_in_questions_by_users_id(cursor, id):
+    query = f"""
+    SELECT user_id
+    FROM question
+    WHERE user_id = {id}
+    """
+    cursor.execute(query)
+    return cursor.fetchone()
+
+
+
+@database_common.connection_handler
+def get_user_id_by_login(cursor, login):
+    query = """
+    SELECT id 
+    FROM users
+    WHERE login = %(login)s
+    """
+    cursor.execute(query, {"login": login})
+    return cursor.fetchone()
 
 

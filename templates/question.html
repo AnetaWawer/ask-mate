@@ -58,7 +58,12 @@
         {% for item in answer %}
             <br><br><br>
             <div class="border-for-answer">
-            <div class="message-answer" ><td>{{ item.message }}</td></div>
+                {% if item.accept_answer == True %}
+                    <div class="message-answer" style="background-color: coral"><td>{{ item.message }}</td></div>
+                {% else %}
+                    <div class="message-answer"><td>{{ item.message }}</td></div>
+                {% endif %}
+
                     <div class="comment-answer" >
                          {% for comment in comments_for_answer %}
                              {% if comment.answer_id ==item.id %}
@@ -71,7 +76,13 @@
                     </div>
 
                 <a href="{{ url_for("add_comment_to_answer_form", answer_id=item.id) }}" ><input type="submit" value="ADD COMMENT"></a>
-            <form action="{{ url_for('edit_answer', answer_id=item.id )}}" method = 'GET'>
+                {% if possibility_acceptance %}
+                    <form  action="{{ url_for('change_status_answer', answer_id=item.id) }}" method = 'POST'>
+                        <button name="status" type="submit" value="{{ True }}">Accept answer</button>
+                        <button name="status" type="submit" value="{{ False }}">Unaccept answwer</button>
+                    </form>
+                <form action="{{ url_for('edit_answer', answer_id=item.id )}}" method = 'GET'>
+                {% endif %}
                 <button class="button-delete-answer" type="submit" value="DELETE ANSWER">{{ cell }}<a href="{{ url_for('delete_answer', answer_id=item.id) }}">DELETE ANSWER</a></button>
                   </p>
                 <button class="button-edit-answer" type="submit"> EDIT ANSWER </button>
@@ -88,5 +99,6 @@
 
     <button class="back-to-the-main-page"><a href="{{ url_for("list") }}">BACK TO THE MAIN PAGE</a></button>
 </div>
+<script src="/../static/js/accepted_answer.js"></script>
 </body>
 </html>

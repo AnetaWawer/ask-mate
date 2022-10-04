@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
@@ -37,9 +37,16 @@ def question(question_id):
     comments_for_questions = cdh.get_comments_to_question(question_id)
     comments_for_answer = cdh.get_comments_to_answer()
     tags = cdh.get_tag_to_question_id(question_id)
+    login = session['login']
+    user_id = qdh.get_user_id_by_login(login)
+    user_id_in_question = qdh.get_user_id_in_questions_by_users_id(user_id['id'])
+    if user_id['id'] == user_id_in_question['user_id']:
+        possibility_acceptance = True
+    else:
+        possibility_acceptance = False
     return render_template("question.html", question_id=question_id, question=questions, answer=answer,
                            comments_for_questions=comments_for_questions, comments_for_answer=comments_for_answer,
-                           tags=tags)
+                           tags=tags, possibility_acceptance=possibility_acceptance)
 
 
 @app.route('/add_question', methods=["POST", "GET"])
@@ -238,6 +245,13 @@ def delete_tag(question_id, tag_id):
     cdh.delete_tag_from_tag(tag_id)
     return redirect(url_for('question', question_id=question_id))
 
+
+@app.route('/answer/<answer_id>', methods=['POST'])
+def change_status_answer(answer_id):
+    new_status = request.form.get('status')
+    adh.update_status_accept_answer(answer_id, new_status)
+    question_id = qdh.get_question_id_by_answer_id(answer_id)
+    return redirect(url_for("question", question_id=question_id['question_id']))
 
 if __name__ == "__main__":
     app.run(
