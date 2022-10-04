@@ -149,6 +149,8 @@ def delete_answer(answer_id):
 def vote_on_question_up(question_id):
     vote = 1
     qdh.vote_on_question(question_id, vote)
+    user_id = users_dh.get_user_id_by_question_id(question_id)[0]['user_id']
+    users_dh.reputation_for_questions_up(user_id)
     return redirect("/list")
 
 
@@ -156,6 +158,8 @@ def vote_on_question_up(question_id):
 def vote_on_question_down(question_id):
     vote = -1
     qdh.vote_on_question(question_id, vote)
+    user_id = users_dh.get_user_id_by_question_id(question_id)[0]['user_id']
+    users_dh.reputation_for_questions_down(user_id)
     return redirect("/list")
 
 
@@ -171,6 +175,8 @@ def vote_on_answer_up(answer_id):
     vote = 1
     adh.vote_on_answer(answer_id, vote)
     question = qdh.get_question_id_by_answer_id(answer_id)
+    user_id = users_dh.get_user_id_by_answer_id(answer_id)[0]['user_id']
+    users_dh.reputation_for_answers_up(user_id)
     return redirect(url_for("question", question_id=question['question_id']))
 
 
@@ -179,6 +185,8 @@ def vote_on_answer_down(answer_id):
     vote = -1
     adh.vote_on_answer(answer_id, vote)
     question_id = qdh.get_question_id_by_answer_id(answer_id)
+    user_id = users_dh.get_user_id_by_answer_id(answer_id)[0]['user_id']
+    users_dh.reputation_for_answers_down(user_id)
     return redirect(url_for("question", question_id=question_id['question_id']))
 
 
@@ -294,7 +302,6 @@ def user_page(user_id):
     user_questions = users_dh.get_question_by_user_id(user_id)
     user_answers = users_dh.get_answer_by_user_id(user_id)
     user_comments = users_dh.get_comment_by_user_id(user_id)
-
     user_details = users_dh.get_user_details(user_id)
     return render_template('user-page.html', user_details=user_details,user_name=user_name, user_questions=user_questions,
                            user_answers=user_answers, user_comments=user_comments, user_id=user_id)
@@ -310,6 +317,9 @@ def change_status_answer(answer_id):
     new_status = request.form.get('status')
     adh.update_status_accept_answer(answer_id, new_status)
     question_id = qdh.get_question_id_by_answer_id(answer_id)
+    user_id = users_dh.get_user_id_by_answer_id(answer_id)[0]['user_id']
+    if new_status == 'True':
+        users_dh.reputation_for_accepted_answer_up(user_id)
     return redirect(url_for("question", question_id=question_id['question_id']))
 
 if __name__ == "__main__":
