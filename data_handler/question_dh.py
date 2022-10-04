@@ -47,7 +47,7 @@ def add_new_question(cursor, title, message, image):
 @database_common.connection_handler
 def get_question_by_id(cursor, question_id):
     query = """
-        SELECT id, submission_time, view_number, vote_number, title, message, image
+        SELECT id, submission_time, view_number, vote_number, title, message, image, user_id
         FROM question
         WHERE id = %(question_id)s"""
     cursor.execute(query, {'question_id': question_id})
@@ -124,12 +124,6 @@ def increase_number_of_views(cursor, question_id):
         WHERE id = %(question_id)s
             """
     cursor.execute(query, {"question_id": question_id})
-
-
-
-
-
-
 
 
 

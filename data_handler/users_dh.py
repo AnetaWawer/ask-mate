@@ -83,3 +83,37 @@ def get_user_id(cursor):
     query = """SELECT user_id FROM user_details"""
     cursor.execute(query)
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def reputation_for_questions_up(cursor, user_id ):
+    query="""UPDATE user_details SET reputation = reputation + 5 WHERE user_id= %(user_id)s"""
+    cursor.execute(query, {"user_id": user_id})
+
+
+@database_common.connection_handler
+def reputation_for_questions_down(cursor, user_id ):
+    query="""UPDATE user_details SET reputation = reputation -2 WHERE user_id= %(user_id)s"""
+    cursor.execute(query, {"user_id": user_id})
+
+@database_common.connection_handler
+def reputation_for_answers_up(cursor, user_id):
+    query = """UPDATE user_details SET reputation = reputation + 10 WHERE user_id= %(user_id)s"""
+    cursor.execute(query, {"user_id": user_id})
+
+@database_common.connection_handler
+def reputation_for_answers_down(cursor, user_id):
+    query = """UPDATE user_details SET reputation = reputation - 2 WHERE user_id= %(user_id)s"""
+    cursor.execute(query, {"user_id": user_id})
+
+@database_common.connection_handler
+def get_user_id_by_question_id(cursor, question_id):
+    query ="""SELECT user_id FROM question WHERE id= %(question_id)s"""
+    cursor.execute(query, {'question_id':question_id})
+    return cursor.fetchall()
+
+@database_common.connection_handler
+def get_user_id_by_answer_id(cursor, answer_id):
+    query ="""SELECT user_id FROM answer WHERE id= %(answer_id)s"""
+    cursor.execute(query, {'answer_id':answer_id})
+    return cursor.fetchall()
