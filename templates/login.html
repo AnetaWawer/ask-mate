@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LOGIN</title>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
+</head>
+<body>
+<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+<form action="{{ url_for('get_login')}}" method="post">
+    <label for="login">LOGIN</label>
+    <input type="text" name="login" id="login">
+    <label for="password">PASSWORD</label>
+    <input type="password" name="password" id="password">
+    <button type="submit">SUBMIT</button>
+</form>
+</body>
+</html>
