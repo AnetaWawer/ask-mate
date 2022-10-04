@@ -78,5 +78,8 @@ def update_number_of_user_comments(cursor, user_id):
     user_id = {'user_id': user_id}
     cursor.execute(query, user_id)
 
-
-
+@database_common.connection_handler
+def get_user_id(cursor):
+    query = """SELECT user_id FROM user_details"""
+    cursor.execute(query)
+    return cursor.fetchall()

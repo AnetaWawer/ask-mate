@@ -242,6 +242,12 @@ def delete_tag(question_id, tag_id):
 
 @app.route('/users')
 def users():
+    users=users_dh.get_user_id()
+    for id in users:
+        user_id=id['user_id']
+        users_dh.update_number_of_user_questions(user_id)
+        users_dh.update_number_of_user_answers(user_id)
+        users_dh.update_number_of_user_comments(user_id)
     is_logged_in = True
     if is_logged_in:
         all_users = users_dh.get_all_users()
@@ -253,13 +259,11 @@ def users():
 @app.route('/user/<user_id>')
 def user_page(user_id):
     user_name = users_dh.get_user_name(user_id)
-    user_details = users_dh.get_user_details(user_id)
     user_questions = users_dh.get_question_by_user_id(user_id)
     user_answers = users_dh.get_answer_by_user_id(user_id)
     user_comments = users_dh.get_comment_by_user_id(user_id)
-    users_dh.update_number_of_user_questions(user_id)
-    users_dh.update_number_of_user_answers(user_id)
-    users_dh.update_number_of_user_comments(user_id)
+
+    user_details = users_dh.get_user_details(user_id)
     return render_template('user-page.html', user_details=user_details,user_name=user_name, user_questions=user_questions,
                            user_answers=user_answers, user_comments=user_comments, user_id=user_id)
 
