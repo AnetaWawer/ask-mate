@@ -8,7 +8,7 @@
 <body>
 
 <a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
-
+<a href="{{ url_for('all_tags') }}">TAGS</a>
 <div class="questions-id-table" >
 <button class="button-delete_question"><a href="{{ url_for("delete_questions", question_id=question_id) }}" >DELETE QUESTION</a></button>
     <button class="button-edit_question"><a href="{{ url_for("edit_question_form", question_id=question_id) }}">EDIT QUESTION</a></button>

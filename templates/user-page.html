@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>USER DETAILS</title>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
+</head>
+<body>
+<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+    {% for name in user_name %}
+        <b>Details and activities of user: {{ name.login }} </b>
+    {%  endfor %}
+    <ul>
+        {% for details in user_details %}
+            <li>User ID: {{ details.user_id }}</li>
+            <li>Username: {{ details.login }}</li>
+            <li>Registration date: {{ details.submission_time }}</li>
+            <li>Number of asked questions: {{ details.num_of_asked_questions }}</li>
+            <li>Number of answers: {{ details.num_of_answers}}</li>
+            <li>Number of comments: {{ details.num_of_comments}}</li>
+            <li>Reputation: {{ details.reputation}}</li>
+        {%  endfor %}
+    </ul>
+    <table>
+        <tr>
+            <b>User Questions:</b><br>
+        {%  for question in user_questions %}
+            <a href="{{ url_for("question", question_id=question.id) }}"> {{ question.title }}  </a><br>
+        {%  endfor %}
+        </tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+            <b>User Answers:</b><br>
+        {%  for answer in user_answers %}
+            <a href="{{ url_for("question", question_id=answer.question_id) }}"> {{ answer.message }}  </a><br>
+        {%  endfor %}
+        </tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+            <b>User Comments:</b><br>
+        {%  for comment in user_comments %}
+            {%  if comment.question_id == None %}
+                <a href="{{ url_for("question", question_id=comment.answer_id) }}">{{ comment.message }}</a><br>
+            {%  else %}
+                <a href="{{ url_for("question", question_id=comment.question_id) }}">{{ comment.message }}</a><br>
+            {%  endif %}
+        {%  endfor %}
+        </tr>
+    </table>
+    <br>
+    <button class="back-to-the-main-page"><a href="{{ url_for("users") }}">BACK TO USERS LIST</a></button><br><br>
+    <button class="back-to-the-main-page"><a href="{{ url_for("list") }}">BACK TO THE MAIN PAGE</a></button>
+
+</body>
+</html>

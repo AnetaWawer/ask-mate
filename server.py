@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-
+import psycopg2.extras
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
+from data_handler import users_dh
 
 app = Flask(__name__)
 
@@ -14,6 +15,7 @@ def to_list():
 
 @app.route('/list', methods=["GET", "POST"])
 def list():
+    is_logged_in = session.get('is_logged_in')
     sort_value = request.form.get("sort_value")
     sort_direction = request.form.get("sort_direction")
     if sort_value == None:
@@ -21,7 +23,7 @@ def list():
         sort_direction = """ASC"""
     question_list = qdh.get_question(sort_value, sort_direction)
     # question_list = dh.get_five_most_recent_questions()
-    return render_template("list.html", question_list=question_list)
+    return render_template("list.html", question_list=question_list, is_logged_in=is_logged_in)
 
 
 @app.route('/list', methods=["GET"])
@@ -30,6 +32,31 @@ def list_answers():
     return render_template("list.html", answer_list=answer_list)
 
 
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
+@app.route('/login', methods=['POST'])
+def get_login():
+    user_login = request.form.get("login")
+    user_password = request.form.get("password")
+    logins_and_passwords = users_dh.get_login_and_password()
+    print(logins_and_passwords)
+    for element in logins_and_passwords:
+        if user_login == format(element['login']):
+            if user_password == format(element['password']):
+                session["user_login"] = user_login
+                session["is_logged_in"] = True
+                return redirect(url_for("list"))
+            else:
+                return redirect(url_for("login"))
+        else:
+            return redirect(url_for("login"))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for("list"))
 @app.route('/question/<question_id>')
 def question(question_id):
     questions = qdh.get_question_by_id(question_id)
@@ -97,7 +124,7 @@ def edit_question(question_id):
     qdh.edit_question(title, message, question_id)
     shift = "/question/" + str(question_id)
     return redirect(shift)
-    return redirect(url_for("edit-question.html", question_id=question_id))
+    # return redirect(url_for("edit-question.html", question_id=question_id))
 
 
 @app.route('/add_question', methods=["GET"])
@@ -246,6 +273,39 @@ def delete_tag(question_id, tag_id):
     return redirect(url_for('question', question_id=question_id))
 
 
+@app.route('/users')
+def users():
+    users=users_dh.get_user_id()
+    for id in users:
+        user_id=id['user_id']
+        users_dh.update_number_of_user_questions(user_id)
+        users_dh.update_number_of_user_answers(user_id)
+        users_dh.update_number_of_user_comments(user_id)
+    is_logged_in = session.get('is_logged_in')
+    if is_logged_in:
+        all_users = users_dh.get_all_users()
+        return render_template('users.html', is_logged_in=is_logged_in,all_users=all_users)
+    else:
+        return redirect(url_for('list'))
+
+
+@app.route('/user/<user_id>')
+def user_page(user_id):
+    user_name = users_dh.get_user_name(user_id)
+    user_questions = users_dh.get_question_by_user_id(user_id)
+    user_answers = users_dh.get_answer_by_user_id(user_id)
+    user_comments = users_dh.get_comment_by_user_id(user_id)
+
+    user_details = users_dh.get_user_details(user_id)
+    return render_template('user-page.html', user_details=user_details,user_name=user_name, user_questions=user_questions,
+                           user_answers=user_answers, user_comments=user_comments, user_id=user_id)
+
+@app.route('/tag')
+def all_tags():
+    quantity_of_tags = cdh.get_quantity_of_tags()
+    return render_template('all-tags.html', quantity_of_tags=quantity_of_tags)
+
+
 @app.route('/answer/<answer_id>', methods=['POST'])
 def change_status_answer(answer_id):
     new_status = request.form.get('status')
@@ -254,6 +314,8 @@ def change_status_answer(answer_id):
     return redirect(url_for("question", question_id=question_id['question_id']))
 
 if __name__ == "__main__":
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
     app.run(
         host='0.0.0.0',
         port=9000,
