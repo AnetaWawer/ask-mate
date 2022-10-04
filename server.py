@@ -145,16 +145,16 @@ def delete_answer(answer_id):
     return redirect(url_for("question", question_id=answer['question_id']))
 
 
-@app.route('/question/<question_id>/vote_up')
+@app.route('/question/<question_id>/vote_up', methods=['POST'])
 def vote_on_question_up(question_id):
     vote = 1
     qdh.vote_on_question(question_id, vote)
     user_id = users_dh.get_user_id_by_question_id(question_id)[0]['user_id']
     users_dh.reputation_for_questions_up(user_id)
-    return redirect("/list")
+    return redirect(url_for("list"))
 
 
-@app.route('/question/<question_id>/vote_down')
+@app.route('/question/<question_id>/vote_down', methods=['POST'])
 def vote_on_question_down(question_id):
     vote = -1
     qdh.vote_on_question(question_id, vote)
