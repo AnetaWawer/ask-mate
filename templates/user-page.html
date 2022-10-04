@@ -8,7 +8,7 @@
 <body>
 <a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
     {% for name in user_name %}
-         Details and activities of user: {{ name.login }} .
+        <b>Details and activities of user: {{ name.login }} </b>
     {%  endfor %}
     <ul>
         {% for details in user_details %}
@@ -52,6 +52,8 @@
         </tr>
     </table>
     <br>
+    <button class="back-to-the-main-page"><a href="{{ url_for("users") }}">BACK TO USERS LIST</a></button><br><br>
     <button class="back-to-the-main-page"><a href="{{ url_for("list") }}">BACK TO THE MAIN PAGE</a></button>
+
 </body>
 </html>
