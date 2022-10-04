@@ -89,3 +89,23 @@ def get_user_id(cursor):
     query = """SELECT user_id FROM user_details"""
     cursor.execute(query)
     return cursor.fetchall()
+
+@database_common.connection_handler
+def get_user_id_in_questions_by_users_id(cursor, id):
+    query = f"""
+    SELECT user_id
+    FROM question
+    WHERE user_id = {id}
+    """
+    cursor.execute(query)
+    return cursor.fetchone()
+
+@database_common.connection_handler
+def get_user_id_by_login(cursor, login):
+    query = """
+    SELECT id 
+    FROM users
+    WHERE login = %(login)s
+    """
+    cursor.execute(query, {"login": login})
+    return cursor.fetchone()

@@ -76,12 +76,3 @@ def update_status_accept_answer(cursor, answer_id, value):
         """
     return cursor.execute(query, {"answer_id": answer_id, 'value': value})
 
-# @database_common.connection_handler
-# def get_status_accept_answer(cursor, answer_id):
-#     query = """
-#         SELECT accept_answer
-#         FROM answer
-#         WHERE id = %(answer_id)s
-#     """
-#     cursor.execute(query, {"answer_id": answer_id})
-#     return cursor.fetchone()

@@ -41,7 +41,6 @@ def get_login():
     user_login = request.form.get("login")
     user_password = request.form.get("password")
     logins_and_passwords = users_dh.get_login_and_password()
-    print(logins_and_passwords)
     for element in logins_and_passwords:
         if user_login == format(element['login']):
             if user_password == format(element['password']):
@@ -64,9 +63,9 @@ def question(question_id):
     comments_for_questions = cdh.get_comments_to_question(question_id)
     comments_for_answer = cdh.get_comments_to_answer()
     tags = cdh.get_tag_to_question_id(question_id)
-    login = session['login']
-    user_id = qdh.get_user_id_by_login(login)
-    user_id_in_question = qdh.get_user_id_in_questions_by_users_id(user_id['id'])
+    user_login = session.get("user_login")
+    user_id = users_dh.get_user_id_by_login(user_login)
+    user_id_in_question = users_dh.get_user_id_in_questions_by_users_id(user_id['id'])
     if user_id['id'] == user_id_in_question['user_id']:
         possibility_acceptance = True
     else:
