@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
+from data_handler import user_dh
 
 app = Flask(__name__)
 
@@ -237,6 +238,19 @@ def search():
 def delete_tag(question_id, tag_id):
     cdh.delete_tag_from_tag(tag_id)
     return redirect(url_for('question', question_id=question_id))
+
+@app.route('/user/<user_id>')
+def user_page(user_id):
+    user_name = user_dh.get_user_name(user_id)
+    user_details = user_dh.get_user_details(user_id)
+    user_questions = user_dh.get_question_by_user_id(user_id)
+    user_answers = user_dh.get_answer_by_user_id(user_id)
+    user_comments = user_dh.get_comment_by_user_id(user_id)
+    user_dh.update_number_of_user_questions(user_id)
+    user_dh.update_number_of_user_answers(user_id)
+    user_dh.update_number_of_user_comments(user_id)
+    return render_template('user-page.html', user_details=user_details,user_name=user_name, user_questions=user_questions,
+                           user_answers=user_answers, user_comments=user_comments)
 
 
 if __name__ == "__main__":
