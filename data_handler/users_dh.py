@@ -10,6 +10,12 @@ import database_common
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 @database_common.connection_handler
+def get_login_and_password(cursor):
+    query = """SELECT login, password FROM users"""
+    cursor.execute(query)
+    return cursor.fetchall()
+
+@database_common.connection_handler
 def get_all_users(cursor):
     query = """ SELECT users.login,num_of_asked_questions, num_of_answers,num_of_comments,reputation, user_details.user_id
      FROM user_details
