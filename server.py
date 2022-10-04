@@ -25,10 +25,18 @@ def user_registration():
 def registration():
     msg=''
     if request.method == 'POST' and 'password' in request.form and 'email' in request.form:
-        password = request.form['password']
         email = request.form['email']
-        # user_data_handler.get_emails()
-        user_data_handler.add_logged_users('email','password')
+        print(email)
+        password = request.form['password']
+        emails = user_data_handler.get_emails()
+        print(emails)
+        verify= user_data_handler.check_email(emails, email)
+        print(verify)
+        if verify:
+            user_data_handler.add_logged_users(email, password)
+        else:
+            msg ='Already have an account?'
+            return render_template('registration.html', msg=msg)
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
 

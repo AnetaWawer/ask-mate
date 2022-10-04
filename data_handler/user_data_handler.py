@@ -24,18 +24,19 @@ def add_logged_users(cursor, email, password):
     cursor.execute(query)
 
 
-@database_common.connection_handler
-def check_email(logins):
-    emails = get_emails()
+
+def check_email(emails,logins):
     for email in emails:
         if email['login'] == logins:
             return False
     return True
 
 
+
+
 @database_common.connection_handler
 def get_emails(cursor):
     query = """ 
-        SELECT * FROM users """
+        SELECT login FROM users """
     cursor.execute(query)
     return cursor.fetchall()
