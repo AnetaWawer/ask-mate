@@ -8,7 +8,7 @@
 <body>
 <a href="{{ url_for('registration') }}"></a>
 <a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
-<button class="button-add-new-question"><a href="{{ url_for("add_question") }}">Add New Question</a></button></div>
+<button class="button-add-new-question"><a href="{{ url_for("add_question") }}">Add New Question</a></button>
 
 <form class="select" action="{{ url_for("list") }}" method="POST"></form>
 
@@ -49,7 +49,7 @@
                     {% if item.image != None %}
                         <div class="space"><div class="'photo"><img class="image" src="{{ url_for('static', filename='images/' + item.image ) }}" alt="blabla" height="200"></div></div>
                     {% else %}
-                        <div class="space"><div class="'photo"><img class="image" src="/static/images/BLANK_ICON.png" alt="blabla" height="200"></div></div>
+                        <div class="space"><div class="'photo"><img class="image" src="/static/images/BLANK_ICON.png" alt="blabla" height="250"></div></div>
                     {% endif %}
             <footer class="vote-list-html"> Question votes: {{ item.vote_number }}
                 <a class="upvote" href="{{ url_for('vote_on_question_up', question_id=item.id) }}"> <input type="submit" value=" ↑ " ></a>
