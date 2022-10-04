@@ -263,6 +263,11 @@ def user_page(user_id):
     return render_template('user-page.html', user_details=user_details,user_name=user_name, user_questions=user_questions,
                            user_answers=user_answers, user_comments=user_comments, user_id=user_id)
 
+@app.route('/tag')
+def all_tags():
+    quantity_of_tags = cdh.get_quantity_of_tags()
+    return render_template('all-tags.html', quantity_of_tags=quantity_of_tags)
+
 
 if __name__ == "__main__":
     app.run(
