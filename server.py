@@ -170,7 +170,7 @@ def vote_on_question_down(question_id):
 #     dh.sort_data(order_by, order_direction)
 #     return redirect("/list")
 
-@app.route('/answer/<answer_id>/vote_up')
+@app.route('/answer/<answer_id>/vote_up', methods=['POST'])
 def vote_on_answer_up(answer_id):
     vote = 1
     adh.vote_on_answer(answer_id, vote)
@@ -180,7 +180,7 @@ def vote_on_answer_up(answer_id):
     return redirect(url_for("question", question_id=question['question_id']))
 
 
-@app.route('/answer/<answer_id>/vote_down')
+@app.route('/answer/<answer_id>/vote_down', methods=['POST'])
 def vote_on_answer_down(answer_id):
     vote = -1
     adh.vote_on_answer(answer_id, vote)
