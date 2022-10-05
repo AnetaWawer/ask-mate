@@ -92,12 +92,13 @@ def get_user_id(cursor):
     return cursor.fetchall()
 
 @database_common.connection_handler
-def get_user_id_in_questions(cursor):
+def get_user_id_in_questions(cursor, id):
     query = f"""
     SELECT user_id
     FROM question
+    WHERE id= %(question_id)s
     """
-    cursor.execute(query)
+    cursor.execute(query, {'question_id':id})
     return cursor.fetchone()
 
 @database_common.connection_handler
