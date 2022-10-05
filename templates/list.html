@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
 <body>
+
 <a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
 {% for message in get_flashed_messages() %}
     <a href="{{ url_for("user_page", user_id=user_id) }}"> {{message}} </a><br><br>
@@ -16,6 +17,10 @@
 <button class="button-add-new-question"><a href="{{ url_for("add_question") }}">Add New Question</a></button></div>
 <a href="{{ url_for('logout') }}">LOGOUT</a>
 {% endif %}
+
+<a href="{{ url_for('bonus_question') }}">bonus_question</a>
+
+
 <form class="select" action="{{ url_for("list") }}" method="POST"></form>
 
     <form action="{{ url_for("search") }}" method="GET">

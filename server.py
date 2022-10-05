@@ -4,6 +4,7 @@ from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
 from data_handler import users_dh
+import bonus_questions
 
 app = Flask(__name__)
 
@@ -357,6 +358,11 @@ def change_status_answer(answer_id):
     if new_status == 'True':
         users_dh.reputation_for_accepted_answer_up(user_id)
     return redirect(url_for("question", question_id=question_id['question_id']))
+
+@app.route('/bonus_question')
+def bonus_question():
+    questions = bonus_questions.SAMPLE_QUESTIONS
+    return render_template("bonus_questions.html", questions=questions)
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
