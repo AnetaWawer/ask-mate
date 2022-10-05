@@ -11,8 +11,9 @@
 {% for message in get_flashed_messages() %}
     <a href="{{ url_for("user_page", user_id=user_id) }}"> {{message}} </a><br><br>
 {% endfor %}
+{% if not is_logged_in %}
 <a href="{{ url_for('login') }}">LOGIN</a>
-
+{% endif %}
 {% if is_logged_in %}
 <button class="button-add-new-question"><a href="{{ url_for("add_question") }}">Add New Question</a></button></div>
 <a href="{{ url_for('logout') }}">LOGOUT</a>

@@ -32,7 +32,7 @@ def list():
     if is_logged_in:
         user = users_dh.get_user_id_by_login(session['user_login'])
         user_id = user['id']
-        flash('Logged in as ' + session['user_login'])
+        flash('Logged in as: ' + session['user_login'])
         return render_template("list.html", question_list=question_list, is_logged_in=is_logged_in, user_id=user_id)
     # question_list = dh.get_five_most_recent_questions()
     return render_template("list.html", question_list=question_list, is_logged_in=is_logged_in)
