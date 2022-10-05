@@ -1,3 +1,4 @@
+import os
 
 import psycopg2.extras
 from flask import Flask, render_template, request, redirect, url_for, session
@@ -9,9 +10,8 @@ from data_handler import data_handler
 from data_handler import users_dh
 
 app = Flask(__name__)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-app.secret_key ='secret string'
+app.config["SESSION_PERMANENT"] = os.urandom(10)
+app.secret_key = os.urandom(10)
 
 
 @app.route("/")
@@ -29,48 +29,46 @@ def registration():
     msg=''
     if request.method == 'POST' and 'password' in request.form and 'email' in request.form:
         email = request.form['email']
-        print(email)
         password = request.form['password']
+        user_data_handler.hash_password(password)
         emails = user_data_handler.get_emails()
-        print(emails)
         verify= user_data_handler.check_email(emails, email)
-        print(verify)
         if verify:
             user_data_handler.add_logged_users(email, password)
         else:
             msg ='Already have an account?'
             return render_template('registration.html', msg=msg)
-    elif request.method == 'POST':
-        msg = 'Please fill out the form!'
+    # elif request.method == 'POST':
+    #     msg = 'Please fill out the form!'
 
-    return render_template('list.html', msg=msg, email=email, password=password)
-
-
-@app.route('/dashboard')
-def dashboard():
-    logged = session.get('logged', None)
-    email = session.get('email', None)
-
-    return render_template('list.html', email=email, logged=logged)
-
-@app.route('/registration', methods=(['GET', 'POST']))
-def logins():
-    message = ''
-    if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
-
-        session['logged'] = True
-        session['email'] = ['email']
-        return render_template('list.html')
-    else:
-        message = 'Incorrect email/password!'
-    return render_template('registration.html.html', message=message)
+    return render_template('list.html', msg=msg)
 
 
-@app.route('/logout')
-def logout():
-    session .pop('email')
-    session.pop('logged')
-    return redirect(url_for('registration'))
+# @app.route('/dashboard')
+# def dashboard():
+#     logged = session.get('logged', None)
+#     email = session.get('email', None)
+#
+#     return render_template('list.html', email=email, logged=logged)
+
+# @app.route('/registration', methods=(['GET', 'POST']))
+# def logins():
+#     message = ''
+#     if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
+#
+#         session['logged'] = True
+#         session['email'] = ['email']
+#         return render_template('list.html')
+#     else:
+#         message = 'Incorrect email/password!'
+#     return render_template('registration.html.html', message=message)
+
+
+# @app.route('/logout')
+# def logout():
+#     session .pop('email')
+#     session.pop('logged')
+#     return redirect(url_for('registration'))
 
 
 @app.route('/list', methods=["GET", "POST"])
@@ -105,18 +103,20 @@ def get_login():
     for element in logins_and_passwords:
         if user_login == format(element['login']):
             if user_password == format(element['password']):
+
                 session["user_login"] = user_login
                 session["is_logged_in"] = True
                 return redirect(url_for("list"))
             else:
-                return redirect(url_for("login"))
+                return redirect(url_for("registration"))
         else:
-            return redirect(url_for("login"))
+            return redirect(url_for("registration"))
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for("list"))
+
 @app.route('/question/<question_id>')
 def question(question_id):
     questions = qdh.get_question_by_id(question_id)
