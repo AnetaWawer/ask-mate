@@ -78,7 +78,7 @@ def question(question_id):
     user_login = session.get("user_login")
     if user_login:
         user_id = users_dh.get_user_id_by_login(user_login)
-        user_id_in_question = users_dh.get_user_id_in_questions_by_users_id(user_id['id'])
+        user_id_in_question = users_dh.get_user_id_in_questions()
         if user_id['id'] == user_id_in_question['user_id']:
             possibility_acceptance = True
         else:
