@@ -3,27 +3,22 @@ function getSortedItems(items, sortField, sortDirection) {
     console.log(items)
     console.log(sortField)
     console.log(sortDirection)
+    console.log(typeof(items))
 
-    // === SAMPLE CODE ===
-    // if you have not changed the original html uncomment the code below to have an idea of the
-    // effect this function has on the table
-    //
+
     if (sortDirection === "asc") {
-        const firstItem = items.shift()
-        if (firstItem) {
-            items.push(firstItem)
-        }
-    } else {
-        const lastItem = items.pop()
-        if (lastItem) {
-            items.push(lastItem)
-        }
+            items.sort((a,b) => {
+                return (a[sortField] < b[sortField] ? -1 : 1)
+            })
     }
-
+    else {
+        items.sort((a,b) => {
+                return (a[sortField] > b[sortField] ? -1 : 1)
+        })
+    }
     return items
 }
 
-// you receive an array of objects which you must filter by all it's keys to have a value matching "filterValue"
 function getFilteredItems(items, filterValue) {
     console.log(items)
     console.log(filterValue)
@@ -63,10 +58,24 @@ function toggleTheme() {
     console.log("toggle theme")
 }
 
-function increaseFont() {
-    console.log("increaseFont")
+function increaseFont(fontSize) {
+    var computedFontSize = window.getComputedStyle(document.getElementsByTagName("body")[0]).fontSize;
+    let strFontSize = computedFontSize.slice(0,2)
+    let intFontSize = parseInt(strFontSize)
+    intFontSize += 5
+    if (intFontSize <= 30){
+        strFontSize = intFontSize.toString()
+    document.getElementsByTagName("table")[0].style.fontSize = strFontSize + "px";
+    document.getElementsByTagName("body")[0].style.fontSize = strFontSize + "px";}
 }
 
 function decreaseFont() {
-    console.log("decreaseFont")
+    var computedFontSize = window.getComputedStyle(document.getElementsByTagName("body")[0]).fontSize;
+    let strFontSize = computedFontSize.slice(0,2)
+    let intFontSize = parseInt(strFontSize)
+    intFontSize -= 5
+    if (intFontSize >= 3){
+        strFontSize = intFontSize.toString()
+    document.getElementsByTagName("table")[0].style.fontSize = strFontSize + "px";
+    document.getElementsByTagName("body")[0].style.fontSize = strFontSize + "px";}
 }
