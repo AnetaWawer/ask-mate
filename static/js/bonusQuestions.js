@@ -3,6 +3,7 @@ function getSortedItems(items, sortField, sortDirection) {
     console.log(items)
     console.log(sortField)
     console.log(sortDirection)
+    console.log(typeof(items))
 
     // === SAMPLE CODE ===
     // if you have not changed the original html uncomment the code below to have an idea of the
@@ -63,10 +64,24 @@ function toggleTheme() {
     console.log("toggle theme")
 }
 
-function increaseFont() {
-    console.log("increaseFont")
+function increaseFont(fontSize) {
+    var computedFontSize = window.getComputedStyle(document.getElementsByTagName("body")[0]).fontSize;
+    let strFontSize = computedFontSize.slice(0,2)
+    let intFontSize = parseInt(strFontSize)
+    intFontSize += 5
+    if (intFontSize <= 30){
+        strFontSize = intFontSize.toString()
+    document.getElementsByTagName("table")[0].style.fontSize = strFontSize + "px";
+    document.getElementsByTagName("body")[0].style.fontSize = strFontSize + "px";}
 }
 
 function decreaseFont() {
-    console.log("decreaseFont")
+    var computedFontSize = window.getComputedStyle(document.getElementsByTagName("body")[0]).fontSize;
+    let strFontSize = computedFontSize.slice(0,2)
+    let intFontSize = parseInt(strFontSize)
+    intFontSize -= 5
+    if (intFontSize >= 3){
+        strFontSize = intFontSize.toString()
+    document.getElementsByTagName("table")[0].style.fontSize = strFontSize + "px";
+    document.getElementsByTagName("body")[0].style.fontSize = strFontSize + "px";}
 }
