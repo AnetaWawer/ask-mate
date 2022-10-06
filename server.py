@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def to_list():
-    return redirect(url_for('user_registration'))
+    return redirect(url_for('list'))
 
 
 @app.route('/registration')
@@ -20,15 +20,15 @@ def user_registration():
     return render_template('registration.html')
 
 
-@app.route('/registration', methods=(['GET', 'POST']))
+@app.route('/registration', methods=['POST'])
 def registration():
     msg=''
-    if request.method == 'POST' and 'password' in request.form and 'email' in request.form:
+    if 'password' in request.form and 'email' in request.form:
         email = request.form['email']
         password = request.form['password']
-        hashed_password =user_data_handler.hash_password(password)
+        hashed_password = user_data_handler.hash_password(password)
         emails = user_data_handler.get_emails()
-        verify= user_data_handler.check_email(emails, email)
+        verify = user_data_handler.check_email(emails, email)
         if verify:
             user_data_handler.add_logged_users(email,hashed_password)
         else:
@@ -103,7 +103,8 @@ def login():
 
 @app.route('/login', methods=['POST'])
 def get_login():
-    user_login = request.form.get("login")
+    print("dupa")
+    user_login = request.form.get("email")
     user_password = request.form.get("password")
     logins_and_passwords = users_dh.get_login_and_password()
     hashed_password = user_data_handler.hash_password(user_password)

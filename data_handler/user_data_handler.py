@@ -21,7 +21,7 @@ def add_logged_users(cursor, email, password):
     query = f"""
       INSERT INTO users (password, login, submission_time)
       VALUES  ('{password}','{email}', '{sub_time}') """
-    cursor.execute(query)
+    return cursor.execute(query)
 
 
 
