@@ -25,6 +25,10 @@ def registration():
         verify = user_data_handler.check_email(emails, email)
         if verify:
             user_data_handler.add_logged_users(email, hashed_password)
+            user = users_dh.get_user_id_by_login(request.form['email'])
+            user_id = user['id']
+            user= {'user_id': user_id, 'num_of_asked_questions':0,'num_of_answers': 0, 'num_of_comments': 0,'reputation': 0, }
+            user_data_handler.add_user_details(user)
             return redirect(url_for('main_page'))
         else:
             msg = 'Already have an account?'
@@ -119,7 +123,7 @@ def question(question_id):
     answer = adh.get_answer(question_id)
     comments_for_questions = cdh.get_comments_to_question(question_id)
     comments_for_answer = cdh.get_comments_to_answer()
-    tags = cdh.get_tag_to_question_id(question_id)
+    tags = cdh.get_tag_to_question_id()
     user_login = session.get("user_login")
     if user_login:
         users_id = users_dh.get_user_id_by_login(user_login)
