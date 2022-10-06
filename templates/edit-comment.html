@@ -6,7 +6,8 @@
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
 <body>
-<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+{% include "./navbar.html" %}
+<br>
 {% for item in comment %}
     <form action="{{ url_for("edit_comment", comment_id=item['id']) }}" method="POST">
         <label for="">Type new comment</label>
@@ -16,5 +17,6 @@
         <button class="Add">Edit comment</button>
     </form>
 {% endfor %}
+<script src="/../static/js/navbar.js"></script>
 </body>
 </html>

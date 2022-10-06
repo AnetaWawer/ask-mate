@@ -10,6 +10,11 @@ import database_common
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+
+
+
+
+
 @database_common.connection_handler
 def get_five_most_recent_questions(cursor):
     query = """

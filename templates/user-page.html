@@ -6,7 +6,8 @@
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
 <body>
-<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+{% include "./navbar.html" %}
+<br>
     {% for name in user_name %}
         <b>Details and activities of user: {{ name.login }} </b>
     {%  endfor %}
@@ -53,7 +54,7 @@
     </table>
     <br>
     <button class="back-to-the-main-page"><a href="{{ url_for("users") }}">BACK TO USERS LIST</a></button><br><br>
-    <button class="back-to-the-main-page"><a href="{{ url_for("list") }}">BACK TO THE MAIN PAGE</a></button>
-
+    <button class="back-to-the-main-page"><a href="{{ url_for("main_page") }}">BACK TO THE MAIN PAGE</a></button>
+<script src="/../static/js/navbar.js"></script>
 </body>
 </html>

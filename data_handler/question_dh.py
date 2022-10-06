@@ -12,11 +12,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 @database_common.connection_handler
-def get_five_most_recent_questions(cursor):
-    query = """
+def get_five_most_recent_questions(cursor, sort_value, sort_direction):
+    query = f"""
         SELECT id, submission_time, view_number, vote_number, title, message, image
         FROM question
-        ORDER BY submission_time DESC
+        ORDER BY {sort_value} {sort_direction}
         LIMIT 5"""
     cursor.execute(query)
     return cursor.fetchall()
