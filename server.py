@@ -119,7 +119,7 @@ def question(question_id):
     answer = adh.get_answer(question_id)
     comments_for_questions = cdh.get_comments_to_question(question_id)
     comments_for_answer = cdh.get_comments_to_answer()
-    tags = cdh.get_tag_to_question_id(question_id)
+    tags = cdh.get_tag_to_question_id()
     user_login = session.get("user_login")
     if user_login:
         users_id = users_dh.get_user_id_by_login(user_login)
