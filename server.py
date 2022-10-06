@@ -1,17 +1,13 @@
-import os
-
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import psycopg2.extras
-from flask import Flask, render_template, request, redirect, url_for, session
 from data_handler import user_data_handler
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
-from data_handler import data_handler
 from data_handler import users_dh
+import bonus_questions
 
 app = Flask(__name__)
-app.config["SESSION_PERMANENT"] = os.urandom(10)
-app.secret_key = os.urandom(10)
 
 
 @app.route("/")
@@ -73,6 +69,12 @@ def registration():
 
 @app.route('/list', methods=["GET", "POST"])
 def list():
+    users=users_dh.get_user_id()
+    for id in users:
+        user_id=id['user_id']
+        users_dh.update_number_of_user_questions(user_id)
+        users_dh.update_number_of_user_answers(user_id)
+        users_dh.update_number_of_user_comments(user_id)
     is_logged_in = session.get('is_logged_in')
     sort_value = request.form.get("sort_value")
     sort_direction = request.form.get("sort_direction")
@@ -80,7 +82,11 @@ def list():
         sort_value = "id"
         sort_direction = """ASC"""
     question_list = qdh.get_question(sort_value, sort_direction)
-
+    if is_logged_in:
+        user = users_dh.get_user_id_by_login(session['user_login'])
+        user_id = user['id']
+        flash('Logged in as: ' + session['user_login'])
+        return render_template("list.html", question_list=question_list, is_logged_in=is_logged_in, user_id=user_id)
     # question_list = dh.get_five_most_recent_questions()
     return render_template("list.html", question_list=question_list, is_logged_in=is_logged_in)
 
@@ -126,37 +132,55 @@ def question(question_id):
     comments_for_answer = cdh.get_comments_to_answer()
     tags = cdh.get_tag_to_question_id(question_id)
     user_login = session.get("user_login")
-    user_id = users_dh.get_user_id_by_login(user_login)
-    user_id_in_question = users_dh.get_user_id_in_questions_by_users_id(user_id['id'])
-    if user_id['id'] == user_id_in_question['user_id']:
-        possibility_acceptance = True
+    if user_login:
+        user_id = users_dh.get_user_id_by_login(user_login)
+        user_id_in_question = users_dh.get_user_id_in_questions(question_id)
+        if user_id['id'] == user_id_in_question['user_id']:
+            possibility_acceptance = True
+        else:
+            possibility_acceptance = False
+        return render_template("question.html", question_id=question_id, question=questions, answer=answer,
+                               comments_for_questions=comments_for_questions, comments_for_answer=comments_for_answer,
+                               tags=tags, possibility_acceptance=possibility_acceptance)
     else:
-        possibility_acceptance = False
-    return render_template("question.html", question_id=question_id, question=questions, answer=answer,
-                           comments_for_questions=comments_for_questions, comments_for_answer=comments_for_answer,
-                           tags=tags, possibility_acceptance=possibility_acceptance)
+        return render_template("question.html", question_id=question_id, question=questions, answer=answer,
+                               comments_for_questions=comments_for_questions, comments_for_answer=comments_for_answer,
+                               tags=tags)
 
 
 @app.route('/add_question', methods=["POST", "GET"])
 def add_question():
-    if request.method == "POST":
-        title = request.form.get("title")
-        message = request.form.get("message")
-        image = request.files.get("filename")
-        filename = qdh.add_file(image)
-        question_id = qdh.add_new_question(title, message, filename)
-        return redirect(url_for("question", question_id=question_id['id']))
-    return render_template('add-question.html')
+    is_logged_in = session.get('is_logged_in')
+    if is_logged_in:
+        if request.method == "POST":
+            title = request.form.get("title")
+            message = request.form.get("message")
+            image = request.files.get("filename")
+            filename = qdh.add_file(image)
+            user = users_dh.get_user_id_by_login(session['user_login'])
+            user_id = user['id']
+            question_id = qdh.add_new_question(title, message, filename,user_id)
+            return redirect(url_for("question", question_id=question_id['id']))
+        return render_template('add-question.html')
+    else:
+        return redirect(url_for("list"))
+
 
 
 @app.route('/question/<question_id>/new-answer')
 def add_answer_form(question_id):
-    return render_template('answer.html', question_id=question_id)
+    is_logged_in = session.get('is_logged_in')
+    if is_logged_in:
+        return render_template('answer.html', question_id=question_id)
+    else:
+        return redirect(url_for("question", question_id=question_id))
 
 
 @app.route('/post_an_answer/<question_id>/new-answer', methods=['POST'])
 def post_an_answer(question_id):
-    answer = {'vote_number': 0, 'question_id': question_id, 'message': request.form.get('message'), 'image': None}
+    user = users_dh.get_user_id_by_login(session['user_login'])
+    user_id = user['id']
+    answer = {'vote_number': 0, 'question_id': question_id, 'message': request.form.get('message'), 'image': None,'user_id': user_id}
     adh.add_answer(answer)
     return redirect(url_for("question", question_id=question_id))
 
@@ -207,20 +231,20 @@ def delete_answer(answer_id):
     return redirect(url_for("question", question_id=answer['question_id']))
 
 
-@app.route('/question/<question_id>/vote_up')
+@app.route('/question/<question_id>/vote_up', methods=['POST'])
 def vote_on_question_up(question_id):
     vote = 1
     qdh.vote_on_question(question_id, vote)
-    user_id = users_dh.get_user_id_by_question_id(question_id)[0]['user_id']
+    user_id = users_dh.get_user_id_by_question_id(question_id)['user_id']
     users_dh.reputation_for_questions_up(user_id)
-    return redirect("/list")
+    return redirect(url_for("list"))
 
 
-@app.route('/question/<question_id>/vote_down')
+@app.route('/question/<question_id>/vote_down', methods=['POST'])
 def vote_on_question_down(question_id):
     vote = -1
     qdh.vote_on_question(question_id, vote)
-    user_id = users_dh.get_user_id_by_question_id(question_id)[0]['user_id']
+    user_id = users_dh.get_user_id_by_question_id(question_id)['user_id']
     users_dh.reputation_for_questions_down(user_id)
     return redirect("/list")
 
@@ -232,47 +256,59 @@ def vote_on_question_down(question_id):
 #     dh.sort_data(order_by, order_direction)
 #     return redirect("/list")
 
-@app.route('/answer/<answer_id>/vote_up')
+@app.route('/answer/<answer_id>/vote_up', methods=['POST'])
 def vote_on_answer_up(answer_id):
     vote = 1
     adh.vote_on_answer(answer_id, vote)
     question = qdh.get_question_id_by_answer_id(answer_id)
-    user_id = users_dh.get_user_id_by_answer_id(answer_id)[0]['user_id']
+    user_id = users_dh.get_user_id_by_answer_id(answer_id)['user_id']
     users_dh.reputation_for_answers_up(user_id)
     return redirect(url_for("question", question_id=question['question_id']))
 
 
-@app.route('/answer/<answer_id>/vote_down')
+@app.route('/answer/<answer_id>/vote_down', methods=['POST'])
 def vote_on_answer_down(answer_id):
     vote = -1
     adh.vote_on_answer(answer_id, vote)
     question_id = qdh.get_question_id_by_answer_id(answer_id)
-    user_id = users_dh.get_user_id_by_answer_id(answer_id)[0]['user_id']
+    user_id = users_dh.get_user_id_by_answer_id(answer_id)['user_id']
     users_dh.reputation_for_answers_down(user_id)
     return redirect(url_for("question", question_id=question_id['question_id']))
 
 
 @app.route('/question/<question_id>/new-comment')
 def add_comment_to_question_form(question_id):
-    return render_template('comment-to-question.html', question_id=question_id)
+    is_logged_in = session.get('is_logged_in')
+    if is_logged_in:
+        return render_template('comment-to-question.html', question_id=question_id)
+    else:
+        return redirect(url_for("question", question_id=question_id))
 
 
 @app.route('/question/<question_id>/new-comment', methods=['POST'])
 def post_new_comment_to_question(question_id):
-    comment = {'question_id': question_id, 'answer_id': None, 'message': request.form.get('message'), 'edited_count': 0}
+    user = users_dh.get_user_id_by_login(session['user_login'])
+    user_id = user['id']
+    comment = {'question_id': question_id, 'answer_id': None, 'message': request.form.get('message'), 'edited_count': 0, 'user_id':user_id}
     cdh.add_comments(comment)
     return redirect(url_for("question", question_id=question_id))
 
 
 @app.route('/answer/<answer_id>/new-comment')
 def add_comment_to_answer_form(answer_id):
-    return render_template('comment-to-answer.html', answer_id=answer_id)
-
+    is_logged_in = session.get('is_logged_in')
+    if is_logged_in:
+        return render_template('comment-to-answer.html', answer_id=answer_id)
+    else:
+        answer = adh.get_answer_by_answer_id(answer_id)
+        return redirect(url_for("question", question_id=answer['question_id']))
 
 @app.route('/answer/<answer_id>/new-comment', methods=['POST'])
 def post_new_comment_to_answer(answer_id):
+    user = users_dh.get_user_id_by_login(session['user_login'])
+    user_id = user['id']
     answer = adh.get_answer_by_answer_id(answer_id)
-    comment = {'question_id': None, 'answer_id': answer_id, 'message': request.form.get('message'), 'edited_count': 0}
+    comment = {'question_id': None, 'answer_id': answer_id, 'message': request.form.get('message'), 'edited_count': 0, 'user_id':user_id}
     cdh.add_comments(comment)
     return redirect(url_for("question", question_id=answer['question_id']))
 
@@ -344,12 +380,6 @@ def delete_tag(question_id, tag_id):
 
 @app.route('/users')
 def users():
-    users=users_dh.get_user_id()
-    for id in users:
-        user_id=id['user_id']
-        users_dh.update_number_of_user_questions(user_id)
-        users_dh.update_number_of_user_answers(user_id)
-        users_dh.update_number_of_user_comments(user_id)
     is_logged_in = session.get('is_logged_in')
     if is_logged_in:
         all_users = users_dh.get_all_users()
@@ -379,10 +409,15 @@ def change_status_answer(answer_id):
     new_status = request.form.get('status')
     adh.update_status_accept_answer(answer_id, new_status)
     question_id = qdh.get_question_id_by_answer_id(answer_id)
-    user_id = users_dh.get_user_id_by_answer_id(answer_id)[0]['user_id']
+    user_id = users_dh.get_user_id_by_answer_id(answer_id)['user_id']
     if new_status == 'True':
         users_dh.reputation_for_accepted_answer_up(user_id)
     return redirect(url_for("question", question_id=question_id['question_id']))
+
+@app.route('/bonus_question')
+def bonus_question():
+    questions = bonus_questions.SAMPLE_QUESTIONS
+    return render_template("bonus_questions.html", questions=questions)
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'

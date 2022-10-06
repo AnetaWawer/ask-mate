@@ -38,7 +38,13 @@ button:hover{
 .logo{
     position: relative; left: 40px;
 }
-
+#outer {
+     width:100%;
+    text-align: center;
+}
+#inner {
+       display: inline-block;
+}
 .upvote{
     background: green;
 }

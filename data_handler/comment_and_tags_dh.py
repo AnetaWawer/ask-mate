@@ -22,10 +22,10 @@ def get_comments_to_question(cursor, question_id):
 @database_common.connection_handler
 def add_comments(cursor, new_comment):
     sub_time = time.strftime("%Y-%m-%d %H:%M")
-    query= """ INSERT INTO comment(question_id, answer_id, message, submission_time, edited_count) 
-    VALUES (%(question_id)s,%(answer_id)s,%(message)s,%(submission_time)s,%(edited_count)s )"""
+    query= """ INSERT INTO comment(question_id, answer_id, message, submission_time, edited_count, user_id) 
+    VALUES (%(question_id)s,%(answer_id)s,%(message)s,%(submission_time)s,%(edited_count)s, %(user_id)s )"""
     new_comments = {'question_id': new_comment['question_id'],'answer_id': new_comment['answer_id'],
-                    'message':new_comment['message'], 'submission_time': sub_time, 'edited_count':new_comment['edited_count']}
+                    'message':new_comment['message'], 'submission_time': sub_time, 'edited_count':new_comment['edited_count'], 'user_id':new_comment['user_id']}
     cursor.execute(query, new_comments)
 
 

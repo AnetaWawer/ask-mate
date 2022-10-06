@@ -33,11 +33,11 @@ def get_question(cursor, sort_value, sort_direction):
 
 
 @database_common.connection_handler
-def add_new_question(cursor, title, message, image):
+def add_new_question(cursor, title, message, image, user_id):
     submission_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     query = f"""
                 INSERT INTO question 
-                VALUES (DEFAULT, '{submission_time}', 0, 0, '{title}', '{message}', '{image}' )   
+                VALUES (DEFAULT, '{submission_time}', 0, 0, '{title}', '{message}', '{image}', '{user_id}' )   
                 RETURNING id;    
             """
     cursor.execute(query)

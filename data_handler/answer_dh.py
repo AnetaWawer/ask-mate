@@ -33,10 +33,10 @@ def get_answer_by_answer_id(cursor, answer_id):
 @database_common.connection_handler
 def add_answer(cursor, new_answer):
     sub_time = time.strftime("%Y-%m-%d %H:%M")
-    query= """ INSERT INTO answer(submission_time, vote_number, question_id, message, image) 
-    VALUES (%(submission_time)s,%(vote_number)s,%(question_id)s,%(message)s,%(image)s )"""
+    query= """ INSERT INTO answer(submission_time, vote_number, question_id, message, image, accept_answer, user_id) 
+    VALUES (%(submission_time)s,%(vote_number)s,%(question_id)s,%(message)s,%(image)s,%(accept_answer)s, %(user_id)s )"""
     new_answers = {'submission_time': sub_time, 'vote_number':new_answer['vote_number'],
-                   'question_id': new_answer['question_id'], 'message':new_answer['message'], 'image':new_answer['image']}
+                   'question_id': new_answer['question_id'], 'message':new_answer['message'], 'image':new_answer['image'], 'accept_answer':False, 'user_id':new_answer['user_id']}
     cursor.execute(query, new_answers)
 
 

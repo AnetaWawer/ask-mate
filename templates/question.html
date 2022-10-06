@@ -87,12 +87,20 @@
                   </p>
                 <button class="button-edit-answer" type="submit"> EDIT ANSWER </button>
             </form>
-                    <footer class="vote"> votes: {{ item['vote_number'] }}
-                        <a class="upvote" href="{{ url_for('vote_on_answer_up', answer_id=item.id) }}"> <input type="submit" value=" ↑ " ></a>
-                        <a class="downvote" href="{{ url_for('vote_on_answer_down', answer_id=item.id) }}"> <input type="submit" value=" ↓ "> </a>
-                    </footer>
-                        </p>
-                  </div>
+                <footer class="vote"> votes: {{ item['vote_number'] }}
+                    <div id="inner">
+                        <form action="{{ url_for('vote_on_answer_up', answer_id=item.id) }}" method="post">
+                            <button class="upvote"><input type="submit" value=" ↑ "></button>
+                        </form>
+                    </div>
+                    <div id="inner">
+                        <form action="{{ url_for('vote_on_answer_down', answer_id=item.id) }}" method="post">
+                            <button class="downvote"><input type="submit" value=" ↓ "></button>
+                        </form>
+                    </div>
+                </footer>
+                </p>
+                </div>
         {% endfor %}
 
     <br><br><br><br>
