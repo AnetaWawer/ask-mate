@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" >
     <title>Question details</title>
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
 <body>
+{% include "./navbar.html" %}
 
-<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
-<a href="{{ url_for('all_tags') }}">TAGS</a>
+
 <div class="questions-id-table" >
+{% if is_logged_in %}
 <button class="button-delete_question"><a href="{{ url_for("delete_questions", question_id=question_id) }}" >DELETE QUESTION</a></button>
-    <button class="button-edit_question"><a href="{{ url_for("edit_question_form", question_id=question_id) }}">EDIT QUESTION</a></button>
+<button class="button-edit_question"><a href="{{ url_for("edit_question_form", question_id=question_id) }}">EDIT QUESTION</a></button>
+{%  else %}
+<button class="button-delete_question"><a href="{{ url_for("question", question_id=question_id) }}" >DELETE QUESTION</a></button>
+<button class="button-edit_question"><a href="{{ url_for("question", question_id=question_id) }}">EDIT QUESTION</a></button>
+{% endif %}
     <div class="title-message">
-        <table>
-            <tr>
-                {% for q in question %}
-                <td><b>{{ q.title }}</b></td>
-            </tr>
-            <tr>
-                <td>{{ q.message }}</td>
-                <br>
-            </tr>
-                {% endfor %}
-
-        </table>
-        </div>
+    {% for q in question %}
+    <b>{{ q.title }}</b>
+    <br>
+    {{ q.message }}
+    <br>
+    {% endfor %}
+    </div>
             <div class="tag">
             <button class="button-tag"><a href="{{ url_for("render_tags", question_id=question_id) }}" >ADD TAG</a></button>
             <p>Tag:</p>
@@ -75,18 +74,33 @@
                              {% endfor %}<br><br><br><br>
                     </div>
 
-                <a href="{{ url_for("add_comment_to_answer_form", answer_id=item.id) }}" ><input type="submit" value="ADD COMMENT"></a>
-                {% if possibility_acceptance %}
+                <button class="button-add-new-comment"><a href="{{ url_for("add_comment_to_answer_form", answer_id=item.id) }}" >ADD COMMENT</a></button>
+                {% if possibility_acceptance  %}
                     <form  action="{{ url_for('change_status_answer', answer_id=item.id) }}" method = 'POST'>
                         <button name="status" type="submit" value="{{ True }}">Accept answer</button>
                         <button name="status" type="submit" value="{{ False }}">Unaccept answwer</button>
                     </form>
-                <form action="{{ url_for('edit_answer', answer_id=item.id )}}" method = 'GET'>
                 {% endif %}
+
+            {% if is_logged_in %}
+                <form action="{{ url_for('edit_answer', answer_id=item.id )}}" method = 'GET'>
+                </p>
+                 <button class="button-edit-answer" type="submit"> EDIT ANSWER </button>
+                 </form>
                 <button class="button-delete-answer" type="submit" value="DELETE ANSWER">{{ cell }}<a href="{{ url_for('delete_answer', answer_id=item.id) }}">DELETE ANSWER</a></button>
-                  </p>
-                <button class="button-edit-answer" type="submit"> EDIT ANSWER </button>
-            </form>
+            {% else %}
+                <form action="{{ url_for('question', question_id=question_id )}}" method = 'GET'>
+                </p>
+                 <button class="button-edit-answer" type="submit"> EDIT ANSWER </button>
+                 </form>
+                <button class="button-delete-answer" type="submit" value="DELETE ANSWER">{{ cell }}<a href="{{ url_for('question', question_id=question_id) }}">DELETE ANSWER</a></button>
+            {% endif %}
+
+
+
+
+
+
                 <footer class="vote"> votes: {{ item['vote_number'] }}
                     <div id="inner">
                         <form action="{{ url_for('vote_on_answer_up', answer_id=item.id) }}" method="post">
@@ -105,7 +119,10 @@
 
     <br><br><br><br>
 
-    <button class="back-to-the-main-page"><a href="{{ url_for("list") }}">BACK TO THE MAIN PAGE</a></button>
+    <button class="back-to-the-main-page"><a href="{{ url_for("main_page") }}">BACK TO THE MAIN PAGE</a></button>
+<script src="/../static/js/navbar.js"></script>
+
+</body>
 </div>
 <script src="/../static/js/accepted_answer.js"></script>
 </body>

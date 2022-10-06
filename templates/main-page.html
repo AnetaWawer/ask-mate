@@ -15,7 +15,7 @@
 {% endif %}
 <a href="{{ url_for('users') }}">USERS</a>
 <a href="{{ url_for('all_tags') }}">TAGS</a>
-<a href="{{ url_for('main_page') }}">GO BACK TO MAIN PAGE</a>
+<a href="{{ url_for('list') }}">SEE ALL QUESTIONS</a>
 {% if is_logged_in %}
      <b><a href="{{ url_for("user_page", user_id=user_id) }}"> {{message}} </a></b>
 {% else %}
@@ -28,10 +28,10 @@
             <input type="search" placeholder="Search" id="search_phrase" name="search_phrase">
 
 </form>
-   <form action="{{ url_for("list") }}" method="POST">
+   <form action="{{ url_for("main_page") }}" method="POST">
        <button class="Search" type="submit" value="submit">Sort</button>
        <label>
-            <div class="custom-select">
+            <div class="custom-select" >
             <select name="sort_direction" >
                 <option value="DESC" HIDDEN>-------select-------</option>
                 <option value="DESC">descending</option>
@@ -55,8 +55,10 @@
     </form>
 </div>
 
+
+<form class="select" action="{{ url_for("list") }}" method="POST"></form>
 <div class="all-element-question" >
-    {% for item in search_question %}
+    {% for item in question_list %}
         <div class="title_request">
         <a href="{{ url_for("question", question_id=item.id) }}"><a href="{{ url_for("increase_views", question_id=item.id) }}">
             <div class="element">
@@ -66,9 +68,18 @@
                     {% else %}
                         <div class="space"><div class="'photo"><img class="image" src="/static/images/BLANK_ICON.png" alt="blabla" height="200"></div></div>
                     {% endif %}
+
             <footer class="vote-list-html"> Question votes: {{ item.vote_number }}
-                <a class="upvote" href="{{ url_for('vote_on_question_up', question_id=item.id) }}"> <input type="submit" value=" ↑ " ></a>
-                <a class="downvote" href="{{ url_for('vote_on_question_down', question_id=item.id) }}"> <input type="submit" value=" ↓ "></a>
+                <div id="inner">
+                    <form action="{{ url_for('vote_on_question_up', question_id=item.id) }}" method="post">
+                        <button class="upvote"><input type="submit" value=" ↑ "></button>
+                    </form>
+                </div>
+                <div id="inner">
+                    <form action="{{ url_for('vote_on_question_down', question_id=item.id) }}" method="post">
+                        <button class="downvote"><input type="submit" value=" ↓ "></button>
+                    </form>
+                </div>
                 <div style="float: right"><div> Number of views: {{ item.view_number }} &nbsp&nbsp&nbsp </div></div>
                 <div style="float: right"><div> Submission time: {{ item.submission_time }} &nbsp&nbsp&nbsp </div></div>
             </footer>

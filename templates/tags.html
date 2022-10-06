@@ -6,7 +6,8 @@
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
 <body>
-<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+{% include "./navbar.html" %}
+<br>
 {% for tag in tags %}
     <button class="add_green"><a href="{{ url_for('save_tag_from_existing_tags', question_id=question_id, tag_id=tag['id']) }}" > {{ tag.name }}</a></button>
 {% endfor %}
@@ -15,5 +16,6 @@
     <input name="new-tag" type="text" required="required" pattern="[A-Za-z0-9]{1,20}">
     <button class="add_green" type="submit">Add</button>
 </form>
+<script src="/../static/js/navbar.js"></script>
 </body>
 </html>

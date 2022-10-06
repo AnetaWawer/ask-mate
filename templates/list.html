@@ -6,27 +6,42 @@
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
 <body>
-<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
-{% for message in get_flashed_messages() %}
-    <a href="{{ url_for("user_page", user_id=user_id) }}"> {{message}} </a><br><br>
-{% endfor %}
-{% if not is_logged_in %}
-<a href="{{ url_for('login') }}">LOGIN</a>
-{% endif %}
+<div class="navbar" id="navbar">
+<a class="back-to-the-main-page" href="{{ url_for("main_page") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
 {% if is_logged_in %}
-<button class="button-add-new-question"><a href="{{ url_for("add_question") }}">Add New Question</a></button></div>
-<a href="{{ url_for('logout') }}">LOGOUT</a>
+    <a href="{{ url_for('logout') }}">LOGOUT</a>
+{% else %}
+    <a href="{{ url_for('login') }}">LOGIN</a>
 {% endif %}
-<form class="select" action="{{ url_for("list") }}" method="POST"></form>
+<a href="{{ url_for('users') }}">USERS</a>
+<a href="{{ url_for('all_tags') }}">TAGS</a>
+<a href="{{ url_for('main_page') }}">GO BACK TO MAIN PAGE</a>
+{% if is_logged_in %}
+     <b><a href="{{ url_for("user_page", user_id=user_id) }}"> {{message}} </a></b>
+{% else %}
+     <b><a href="{{ url_for("main_page") }}"> {{message}} </a></b>
+{% endif %}
 
-    <form action="{{ url_for("search") }}" method="GET">
+<form action="{{ url_for("search") }}" method="GET">
         <label for="search_phrase"></label>
+            <button class="search-button" type="submit">Search</button>
             <input type="search" placeholder="Search" id="search_phrase" name="search_phrase">
-            <button type="submit">Search</button>
-    </form>
 
-    <form action="{{ url_for("list") }}" method="POST">
+</form>
+   <form action="{{ url_for("list") }}" method="POST">
+       <button class="Search" type="submit" value="submit">Sort</button>
+       <label>
+            <div class="custom-select">
+            <select name="sort_direction" >
+                <option value="DESC" HIDDEN>-------select-------</option>
+                <option value="DESC">descending</option>
+                <option value="ASC">ascending</option>
+            </select>
+            </div>
+        </label>
+
         <label>
+            <div class="custom-select-2" >
             <select name="sort_value">
                 <option value="id" HIDDEN>-------select-------</option>
                 <option value="title">title</option>
@@ -35,19 +50,15 @@
                 <option value="view_number">number of views</option>
                 <option value="vote_number">number of votes</option>
             </select>
+            </div>
         </label>
-
-        <label>
-            <select name="sort_direction">
-                <option value="DESC" HIDDEN>----select----</option>
-                <option value="DESC">descending</option>
-                <option value="ASC">ascending</option>
-            </select>
-        </label>
-        <button class="Search" type="submit" value="submit">Sort</button>
     </form>
-<a href="{{ url_for('users') }}">USERS</a>
-<a href="{{ url_for('all_tags') }}">TAGS</a>
+</div>
+
+{% if is_logged_in %}
+<button class="button-add-new-question"><a href="{{ url_for("add_question") }}">Add New Question</a></button></div>
+{% endif %}
+
 <div class="all-element-question" >
     {% for item in question_list %}
         <div class="title_request">
@@ -79,5 +90,8 @@
         </div>
     {% endfor %}
 </div>
+
+<script src="/../static/js/navbar.js"></script>
+
 </body>
 </html>
