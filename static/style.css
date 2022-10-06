@@ -1,7 +1,8 @@
 body{
     background: #e9eef2;
     font-family: "Gill Sans", cursive;
-    font-size: 25px;
+    font-size: 22px;
+    margin-top: 11px;
 }
 a {
     text-decoration: none;
@@ -28,12 +29,7 @@ button:hover{
     display: inline-block;
     font-size: 16px;
 }
-.title{
-    background-color: rgb(209, 218, 220);
-    margin:-10px;
-    margin-bottom: 20px;
-    color: #2e424d;
-}
+
 
 .logo{
     position: relative; left: 40px;
@@ -55,9 +51,9 @@ button:hover{
 
 
 .button-add-new-question{
-    position: absolute;
+    position: fixed;
     right: 70px;
-    top: 40px;
+    top: 160px;
 }
 
 .select{
@@ -95,10 +91,18 @@ button:hover{
 .photo{
     margin-top: 40px;
 }
-img{
+img.logo{
+    margin-left: -60px;
+    margin-top: -38px;
+    margin-bottom: -20px;
     max-width: 150px;
     max-height: 100px;
 }
+img.image{
+    max-width: 150px;
+    max-height: 100px;
+}
+
 .image{
     border-radius: 10px;
     border-style: solid;
@@ -142,6 +146,7 @@ img{
 
 .button-delete-answer{
     position: absolute; right: 500px;
+
 }
 .button-edit-answer{
     position: absolute; right: 650px;
@@ -159,6 +164,150 @@ img{
 .message-answer{
 }
 
+
+.navbar  {
+    padding-top: 20px;
+    padding-bottom: 95px;
+    background-color: rgb(209, 218, 220);
+    margin: -10px;
+    font-family: "Gill Sans", cursive;
+
+
+}
+
+.navbar a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 15px;
+    margin-left: 50px;
+    margin-top: 14px;
+    font-size: 16px;
+    font-family: "Gill Sans", cursive;
+  	font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", Arial, sans-serif;
+}
+
+.navbar a:hover {
+    background-color: rgb(183, 192, 197);
+    color: black;
+    padding: 15px 15px;
+
+}
+
+
+
+.navbar input[type=search] {
+    position: fixed;
+    display: block;
+    padding: 6px;
+    margin-top: 25px;
+    margin-left: 1580px;
+    border: none;
+    font-size: 15px;
+}
+
+.navbar .search-button{
+    position: fixed;
+    display: block;
+    float: right;
+    padding: 3px;
+    margin-top: 23px;
+    margin-left: 1800px;
+    border: 4px inset #fdae37; border-radius: 10px 10px 10px 10px;
+
+}
+
+.custom-select{
+    position: fixed;
+    display: block;
+    float: right;
+
+    margin-right: 16px;
+    padding-right: 10px;
+
+}
+.custom-select select {
+    position: fixed;
+    display: block;
+    margin-left: 1370px;
+    width: 120px;
+    height: 30px;
+    padding: 2px;
+    margin-top: 25px;
+
+}
+
+.custom-select-2 select {
+    position: fixed;
+    display: block;
+    margin-left: 1220px;
+    width: 120px;
+    height: 30px;
+    padding: 2px;
+    margin-top: 25px;
+
+}
+
+.navbar .Search{
+    position: fixed;
+    display: block;
+    float: right;
+    padding: 3px;
+    margin-top: 25px;
+    margin-left: 1515px;
+    border: 4px inset #fdae37; border-radius: 10px 10px 10px 10px;
+}
+
+.button-delete_question{
+    margin-top: 30px;
+}
+
+.users, th, td {
+    border:1px solid  black;
+    padding: 12px;
+    text-align: center;
+    border-collapse: collapse;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.users tr:nth-child(even) {
+    background-color: rgb(209, 218, 220);
+}
+
+.tags, th, td {
+    border: 1px solid black;
+    padding: 12px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.tags tr:nth-child(even) {
+    background-color: rgb(209, 218, 220);
+}
+
+.sticky {
+    position: fixed;
+    padding-right: 1177px;
+    padding-top: 30px;
+    padding-bottom: 5px;
+    text-align: center;
+    top: 0;
+
+}
+
+.login-message{
+    position: fixed;
+    right: 70px;
+    top: 120px;
+}
+.bonus-question{
+    position: fixed;
+    right: 70px;
+    top: 200px;
+}
+
 * {
   	box-sizing: border-box;
   	font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", Arial, sans-serif;
@@ -167,8 +316,9 @@ img{
   	-moz-osx-font-smoothing: grayscale;
 }
 body {
-  	background-color: #435165;
-  	margin: 0;
+    background-color: rgb(216, 227, 229);
+
+    margin-top: 11px;
 }
 .login, .register {
   	width: 400px;

@@ -5,8 +5,10 @@
     <title>LOGIN</title>
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
+{% include "./navbar.html" %}
+<br>
 <body>
-<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+
 <div class="register">
     <h1>Login</h1>
     <div class="links">
@@ -25,5 +27,6 @@
     <div class="msg">{{ msg }}</div>
     <input type="submit" value="Login">
 </form>
+<script src="/../static/js/navbar.js"></script>
 </body>
 </html>

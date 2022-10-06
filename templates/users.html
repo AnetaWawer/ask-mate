@@ -6,9 +6,10 @@
     <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
 </head>
 <body>
-<a class="back-to-the-main-page" href="{{ url_for("list") }}"><div class='title' ><img class="logo" src="/static/images/logo-askmate.png" alt=""></div></a>
+{% include "./navbar.html" %}
+<br>
 {% if is_logged_in %}
-<table>
+<table class="users">
     <tr>
         <td>USERNAME</td>
         <td>ASKED QUESTIONS</td>
@@ -29,6 +30,6 @@
 
 {% endif %}
 
-
+<script src="/../static/js/navbar.js"></script>
 </body>
 </html>
