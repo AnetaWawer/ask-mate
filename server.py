@@ -1,13 +1,39 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import psycopg2.extras
+from data_handler import user_data_handler
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
 from data_handler import users_dh
+import bonus_questions
 
 app = Flask(__name__)
 
 
+@app.route('/registration')
+def user_registration():
+    return render_template('registration.html', message=users_dh.is_user_logged_in_message())
+
+
+@app.route('/registration', methods=['POST'])
+def registration():
+    msg=''
+    if 'password' in request.form and 'email' in request.form:
+        email = request.form['email']
+        password = request.form['password']
+        hashed_password = user_data_handler.hash_password(password)
+        emails = user_data_handler.get_emails()
+        verify = user_data_handler.check_email(emails, email)
+        if verify:
+            user_data_handler.add_logged_users(email,hashed_password)
+            return redirect(url_for('main_page'))
+        else:
+            msg ='Already have an account?'
+            return render_template('registration.html',  msg=msg)
+    # elif request.method == 'POST':
+    #     msg = 'Please fill out the form!'
+
+    return render_template('main-page.html', msg=msg)
 
 @app.route("/", methods=["GET", "POST"])
 def main_page():
@@ -58,19 +84,20 @@ def login():
 
 @app.route('/login', methods=['POST'])
 def get_login():
-    user_login = request.form.get("login")
+    user_login = request.form.get("email")
     user_password = request.form.get("password")
     logins_and_passwords = users_dh.get_login_and_password()
+    hashed_password = user_data_handler.hash_password(user_password)
+    verify_password = user_data_handler.verify_password(user_password,hashed_password)
+
     for element in logins_and_passwords:
         if user_login == format(element['login']):
-            if user_password == format(element['password']):
+            if verify_password:
                 session["user_login"] = user_login
                 session["is_logged_in"] = True
                 return redirect(url_for("main_page"))
             else:
                 return redirect(url_for("login"))
-        else:
-            continue
     return redirect(url_for("login"))
 
 @app.route('/logout')
@@ -350,10 +377,11 @@ def delete_tag(question_id, tag_id):
 
 @app.route('/users')
 def users():
+    all_users = users_dh.get_all_users()
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     if is_logged_in:
-        all_users = users_dh.get_all_users()
+        print(all_users)
         return render_template('users.html', is_logged_in=is_logged_in,all_users=all_users, message=users_dh.is_user_logged_in_message(), user_id=user_id)
     else:
         return redirect(url_for('main_page'))
@@ -387,6 +415,11 @@ def change_status_answer(answer_id):
     if new_status == 'True':
         users_dh.reputation_for_accepted_answer_up(user_id)
     return redirect(url_for("question", question_id=question_id['question_id']))
+
+@app.route('/bonus_question')
+def bonus_question():
+    questions = bonus_questions.SAMPLE_QUESTIONS
+    return render_template("bonus_questions.html", questions=questions)
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'

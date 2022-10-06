@@ -7,12 +7,25 @@
 </head>
 {% include "./navbar.html" %}
 <br>
+<body>
+
+<div class="register">
+    <h1>Login</h1>
+    <div class="links">
+        <a href="{{ url_for('get_login') }}" class="active">Login</a>
+        <a href="{{ url_for('registration') }}" >Register</a>
+    </div>
 <form action="{{ url_for('get_login')}}" method="post">
-    <label for="login">LOGIN</label>
-    <input type="text" name="login" id="login">
-    <label for="password">PASSWORD</label>
-    <input type="password" name="password" id="password">
-    <button type="submit">SUBMIT</button>
+    <input type="text" name="email" placeholder="Email" id="email" required>
+    <label for="password">
+        <i class="fas fa-lock"></i>
+    </label>
+    <input type="password" name="password" placeholder="Password" id="password" required>
+    <label for="email">
+        <i class="fas fa-envelope"></i>
+    </label>
+    <div class="msg">{{ msg }}</div>
+    <input type="submit" value="Login">
 </form>
 <script src="/../static/js/navbar.js"></script>
 </body>

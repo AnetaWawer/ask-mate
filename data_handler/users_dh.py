@@ -169,7 +169,7 @@ def is_user_logged_in_message():
     if session.get('is_logged_in'):
         message = 'Logged in as: ' + session['user_login']
     else:
-        message = 'You are not logged in.'
+        message = 'Not logged in.'
     return message
 
 

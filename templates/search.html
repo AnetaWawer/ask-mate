@@ -11,17 +11,11 @@
 {% if is_logged_in %}
     <a href="{{ url_for('logout') }}">LOGOUT</a>
 {% else %}
-    <a href="{{ url_for('login') }}">LOGIN</a>
+    <a href="{{ url_for('user_registration') }}">LOGIN/SIGN UP</a>
 {% endif %}
 <a href="{{ url_for('users') }}">USERS</a>
 <a href="{{ url_for('all_tags') }}">TAGS</a>
-<a href="{{ url_for('main_page') }}">GO BACK TO MAIN PAGE</a>
-{% if is_logged_in %}
-     <b><a href="{{ url_for("user_page", user_id=user_id) }}"> {{message}} </a></b>
-{% else %}
-     <b><a href="{{ url_for("main_page") }}"> {{message}} </a></b>
-{% endif %}
-
+<a href="{{ url_for('main_page') }}">BACK TO MAIN PAGE</a>
 <form action="{{ url_for("search") }}" method="GET">
         <label for="search_phrase"></label>
             <button class="search-button" type="submit">Search</button>
@@ -54,7 +48,11 @@
         </label>
     </form>
 </div>
-
+{% if is_logged_in %}
+     <b><a class="login-message" href="{{ url_for("user_page", user_id=user_id) }}"> {{message}} </a></b>
+{% else %}
+     <b><a class="login-message" href="{{ url_for("main_page") }}"> {{message}} </a></b>
+{% endif %}
 <div class="all-element-question" >
     {% for item in search_question %}
         <div class="title_request">

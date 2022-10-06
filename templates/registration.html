@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>REGISTATION</title>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='style.css') }}>
+</head>
+
+<body>
+{% include "./navbar.html" %}
+		<div class="register">
+			<h1>Register</h1>
+			<div class="links">
+				<a href="{{ url_for('get_login') }}">Login</a>
+				<a href="{{ url_for('registration') }}" class="active">Register</a>
+			</div>
+			<form action="{{ url_for('registration') }}" method="post" autocomplete="off">
+
+
+				<input type="text" name="email" placeholder="Email" id="email" required>
+                <label for="password">
+					<i class="fas fa-lock"></i>
+				</label>
+				<input type="password" name="password" placeholder="Password" id="password" required>
+				<label for="email">
+					<i class="fas fa-envelope"></i>
+				</label>
+				<div class="msg">{{ msg }}</div>
+				<input type="submit" value="Register">
+			</form>
+		</div>
+        <script src="/../static/js/navbar.js"></script>
+	</body>
+</html>
+{#</head>#}
+{##}
+{#<body>#}
+{#{% if msg  %}#}
+{#{{ msg }}#}
+{#  {% endif %}#}
+{##}
+{#<form action="{{ url_for('registration') }}" method="post">#}
+{#<label for="" >email</label>#}
+{#<input type="text" name="email" >#}
+{##}
+{#<label for="">Password</label>#}
+{#<input type="password" name="password" >#}
+{##}
+{#<button class="button" type="submit"> Submit</button>#}
+{#    <a href="">Log in</a>#}
+{##}
+{#</form>#}
+{##}
+{#</body>#}
+{##}
+{#</html>#}
