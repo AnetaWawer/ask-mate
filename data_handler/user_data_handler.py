@@ -18,7 +18,7 @@ def verify_password(plain_text_password, hashed_password):
 @database_common.connection_handler
 def add_logged_users(cursor, email, password):
     sub_time = time.strftime("%Y-%m-%d %H:%M")
-    query = f"""  
+    query = f"""
       INSERT INTO users (password, login, submission_time)
       VALUES  ('{password}','{email}', '{sub_time}') """
     cursor.execute(query)
@@ -36,7 +36,7 @@ def check_email(emails,logins):
 
 @database_common.connection_handler
 def get_emails(cursor):
-    query = """ 
+    query = """
         SELECT login FROM users """
     cursor.execute(query)
     return cursor.fetchall()

@@ -24,17 +24,17 @@ def user_registration():
     return render_template('registration.html')
 
 
-@app.route('/registration/list', methods=(['GET', 'POST']))
+@app.route('/registration', methods=(['GET', 'POST']))
 def registration():
     msg=''
     if request.method == 'POST' and 'password' in request.form and 'email' in request.form:
         email = request.form['email']
         password = request.form['password']
-        user_data_handler.hash_password(password)
+        hashed_password =user_data_handler.hash_password(password)
         emails = user_data_handler.get_emails()
         verify= user_data_handler.check_email(emails, email)
         if verify:
-            user_data_handler.add_logged_users(email, password)
+            user_data_handler.add_logged_users(email,hashed_password)
         else:
             msg ='Already have an account?'
             return render_template('registration.html', msg=msg)
@@ -100,17 +100,18 @@ def get_login():
     user_login = request.form.get("login")
     user_password = request.form.get("password")
     logins_and_passwords = users_dh.get_login_and_password()
+    hashed_password = user_data_handler.hash_password(user_password)
+    verify_password = user_data_handler.verify_password(user_password,hashed_password)
+
     for element in logins_and_passwords:
         if user_login == format(element['login']):
-            if user_password == format(element['password']):
-
+            if verify_password:
                 session["user_login"] = user_login
                 session["is_logged_in"] = True
                 return redirect(url_for("list"))
             else:
-                return redirect(url_for("registration"))
-        else:
-            return redirect(url_for("registration"))
+                return redirect(url_for("login"))
+    return redirect(url_for("login"))
 
 @app.route('/logout')
 def logout():
