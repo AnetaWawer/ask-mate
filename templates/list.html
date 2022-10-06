@@ -11,7 +11,7 @@
 {% if is_logged_in %}
     <a href="{{ url_for('logout') }}">LOG OUT</a>
 {% else %}
-    <a href="{{ url_for('user_registration') }}">SIGN IN</a>
+    <a href="{{ url_for('login') }}">SIGN IN</a>
 {% endif %}
 
 <a href="{{ url_for('users') }}">USERS</a>
