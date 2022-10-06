@@ -1,8 +1,6 @@
 import bcrypt
 import time
-
 import database_common
-
 
 
 def hash_password(plain_text_password):
@@ -24,14 +22,11 @@ def add_logged_users(cursor, email, password):
     return cursor.execute(query)
 
 
-
-def check_email(emails,logins):
+def check_email(emails, logins):
     for email in emails:
         if email['login'] == logins:
             return False
     return True
-
-
 
 
 @database_common.connection_handler

@@ -1,12 +1,6 @@
 import os
-import shutil
 import time
-from tempfile import NamedTemporaryFile
-from typing import List, Dict
-from psycopg2 import sql
-from psycopg2.extras import RealDictCursor
 import database_common
-
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -14,7 +8,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 @database_common.connection_handler
 def get_comments_to_question(cursor, question_id):
     query = """ SELECT * FROM comment WHERE question_id = (%(question_id)s) """
-    comment = {'question_id':question_id}
+    comment = {'question_id': question_id}
     cursor.execute(query, comment)
     return cursor.fetchall()
 
@@ -22,10 +16,11 @@ def get_comments_to_question(cursor, question_id):
 @database_common.connection_handler
 def add_comments(cursor, new_comment):
     sub_time = time.strftime("%Y-%m-%d %H:%M")
-    query= """ INSERT INTO comment(question_id, answer_id, message, submission_time, edited_count, user_id) 
+    query = """ INSERT INTO comment(question_id, answer_id, message, submission_time, edited_count, user_id) 
     VALUES (%(question_id)s,%(answer_id)s,%(message)s,%(submission_time)s,%(edited_count)s, %(user_id)s )"""
-    new_comments = {'question_id': new_comment['question_id'],'answer_id': new_comment['answer_id'],
-                    'message':new_comment['message'], 'submission_time': sub_time, 'edited_count':new_comment['edited_count'], 'user_id':new_comment['user_id']}
+    new_comments = {'question_id': new_comment['question_id'], 'answer_id': new_comment['answer_id'],
+                    'message': new_comment['message'], 'submission_time': sub_time,
+                    'edited_count': new_comment['edited_count'], 'user_id': new_comment['user_id']}
     cursor.execute(query, new_comments)
 
 
@@ -50,7 +45,7 @@ def save_new_tag(cursor, new_tag):
 
 
 @database_common.connection_handler
-def get_tag_to_question_id(cursor, question_id):
+def get_tag_to_question_id(cursor):
     query = f"""SELECT  *
         FROM tag
         FULL JOIN
@@ -93,7 +88,7 @@ def get_comments_to_answer(cursor):
 @database_common.connection_handler
 def get_comment_by_comment_id(cursor, comment_id):
     query = """ SELECT message, id FROM comment WHERE id= %(comment_id)s"""
-    cursor.execute(query, {'comment_id':comment_id})
+    cursor.execute(query, {'comment_id': comment_id})
     return cursor.fetchall()
 
 
@@ -105,10 +100,12 @@ def delete_comment(cursor, comment_id):
         """
     return cursor.execute(query)
 
+
 @database_common.connection_handler
-def delete_comment_to_answer(cursor,answer_id):
-    query= """DELETE FROM comment WHERE answer_id= %(answer_id)s"""
+def delete_comment_to_answer(cursor, answer_id):
+    query = """DELETE FROM comment WHERE answer_id= %(answer_id)s"""
     cursor.execute(query, {"answer_id": answer_id})
+
 
 @database_common.connection_handler
 def edit_comment(cursor, message, comment_id):
@@ -136,8 +133,7 @@ def direct_to_question(cursor):
 @database_common.connection_handler
 def update_edit_counts(cursor, comment_id, count):
     query = """ UPDATE comment SET edited_count = edited_count + %(count)s WHERE id = %(comment_id)s """
-    return cursor.execute(query, {'comment_id':comment_id, 'count':count })
-
+    return cursor.execute(query, {'comment_id': comment_id, 'count': count})
 
 
 @database_common.connection_handler
@@ -145,8 +141,6 @@ def delete_tag_from_tag(cursor, tag_id):
     query = """DELETE FROM question_tag WHERE tag_id = %(tag_id)s;
                 DELETE FROM tag WHERE id = %(tag_id)s"""
     return cursor.execute(query, {'tag_id': tag_id})
-
-
 
 
 @database_common.connection_handler

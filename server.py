@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-import psycopg2.extras
+from flask import Flask, render_template, request, redirect, url_for, session
 from data_handler import user_data_handler
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
@@ -17,7 +16,7 @@ def user_registration():
 
 @app.route('/registration', methods=['POST'])
 def registration():
-    msg=''
+    msg = ''
     if 'password' in request.form and 'email' in request.form:
         email = request.form['email']
         password = request.form['password']
@@ -25,36 +24,38 @@ def registration():
         emails = user_data_handler.get_emails()
         verify = user_data_handler.check_email(emails, email)
         if verify:
-            user_data_handler.add_logged_users(email,hashed_password)
+            user_data_handler.add_logged_users(email, hashed_password)
             return redirect(url_for('main_page'))
         else:
-            msg ='Already have an account?'
-            return render_template('registration.html',  msg=msg)
+            msg = 'Already have an account?'
+            return render_template('registration.html', msg=msg)
     # elif request.method == 'POST':
     #     msg = 'Please fill out the form!'
 
     return render_template('main-page.html', msg=msg)
 
+
 @app.route("/", methods=["GET", "POST"])
 def main_page():
-    users=users_dh.get_user_id()
+    users = users_dh.get_user_id()
     for id in users:
-        user_id=id['user_id']
+        user_id = id['user_id']
         users_dh.update_number_of_user_questions(user_id)
         users_dh.update_number_of_user_answers(user_id)
         users_dh.update_number_of_user_comments(user_id)
     is_logged_in = session.get('is_logged_in')
     sort_value = request.form.get("sort_value")
     sort_direction = request.form.get("sort_direction")
-    if sort_value == None:
+    if sort_value is None:
         question_list = qdh.get_five_most_recent_questions('submission_time', """DESC""")
     else:
         question_list = qdh.get_five_most_recent_questions(sort_value, sort_direction)
     if is_logged_in:
         user_id = users_dh.user_id()
-        return render_template('main-page.html', question_list=question_list, is_logged_in=is_logged_in, user_id=user_id, message=users_dh.is_user_logged_in_message())
-    return render_template('main-page.html', question_list=question_list, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message())
-
+        return render_template('main-page.html', question_list=question_list, is_logged_in=is_logged_in,
+                               user_id=user_id, message=users_dh.is_user_logged_in_message())
+    return render_template('main-page.html', question_list=question_list, is_logged_in=is_logged_in,
+                           message=users_dh.is_user_logged_in_message())
 
 
 @app.route('/list', methods=["GET", "POST"])
@@ -62,14 +63,16 @@ def list():
     is_logged_in = session.get('is_logged_in')
     sort_value = request.form.get("sort_value")
     sort_direction = request.form.get("sort_direction")
-    if sort_value == None:
+    if sort_value is None:
         sort_value = "id"
         sort_direction = """ASC"""
     question_list = qdh.get_question(sort_value, sort_direction)
     if is_logged_in:
         user_id = users_dh.user_id()
-        return render_template('list.html', question_list=question_list, is_logged_in=is_logged_in, user_id=user_id, message=users_dh.is_user_logged_in_message())
-    return render_template('list.html', question_list=question_list, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message())
+        return render_template('list.html', question_list=question_list, is_logged_in=is_logged_in, user_id=user_id,
+                               message=users_dh.is_user_logged_in_message())
+    return render_template('list.html', question_list=question_list, is_logged_in=is_logged_in,
+                           message=users_dh.is_user_logged_in_message())
 
 
 @app.route('/list', methods=["GET"])
@@ -82,13 +85,14 @@ def list_answers():
 def login():
     return render_template("login.html", message=users_dh.is_user_logged_in_message())
 
+
 @app.route('/login', methods=['POST'])
 def get_login():
     user_login = request.form.get("email")
     user_password = request.form.get("password")
     logins_and_passwords = users_dh.get_login_and_password()
     hashed_password = user_data_handler.hash_password(user_password)
-    verify_password = user_data_handler.verify_password(user_password,hashed_password)
+    verify_password = user_data_handler.verify_password(user_password, hashed_password)
 
     for element in logins_and_passwords:
         if user_login == format(element['login']):
@@ -99,6 +103,7 @@ def get_login():
             else:
                 return redirect(url_for("login"))
     return redirect(url_for("login"))
+
 
 @app.route('/logout')
 def logout():
@@ -125,7 +130,8 @@ def question(question_id):
             possibility_acceptance = False
         return render_template("question.html", question_id=question_id, question=questions, answer=answer,
                                comments_for_questions=comments_for_questions, comments_for_answer=comments_for_answer,
-                               tags=tags, possibility_acceptance=possibility_acceptance,is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id)
+                               tags=tags, possibility_acceptance=possibility_acceptance, is_logged_in=is_logged_in,
+                               message=users_dh.is_user_logged_in_message(), user_id=user_id)
     else:
         return render_template("question.html", question_id=question_id, question=questions, answer=answer,
                                comments_for_questions=comments_for_questions, comments_for_answer=comments_for_answer,
@@ -142,12 +148,12 @@ def add_question():
             message = request.form.get("message")
             image = request.files.get("filename")
             filename = qdh.add_file(image)
-            question_id = qdh.add_new_question(title, message, filename,user_id)
+            question_id = qdh.add_new_question(title, message, filename, user_id)
             return redirect(url_for("question", question_id=question_id['id']))
-        return render_template('add-question.html',is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(),user_id=user_id)
+        return render_template('add-question.html', is_logged_in=is_logged_in,
+                               message=users_dh.is_user_logged_in_message(), user_id=user_id)
     else:
         return redirect(url_for("main_page", is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message()))
-
 
 
 @app.route('/question/<question_id>/new-answer')
@@ -155,16 +161,19 @@ def add_answer_form(question_id):
     is_logged_in = session.get('is_logged_in')
     if is_logged_in:
         user_id = users_dh.user_id()
-        return render_template('answer.html', question_id=question_id, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(),user_id=user_id)
+        return render_template('answer.html', question_id=question_id, is_logged_in=is_logged_in,
+                               message=users_dh.is_user_logged_in_message(), user_id=user_id)
     else:
-        return redirect(url_for("question", question_id=question_id, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message()))
+        return redirect(url_for("question", question_id=question_id, is_logged_in=is_logged_in,
+                                message=users_dh.is_user_logged_in_message()))
 
 
 @app.route('/post_an_answer/<question_id>/new-answer', methods=['POST'])
 def post_an_answer(question_id):
     user = users_dh.get_user_id_by_login(session['user_login'])
     user_id = user['id']
-    answer = {'vote_number': 0, 'question_id': question_id, 'message': request.form.get('message'), 'image': None,'user_id': user_id}
+    answer = {'vote_number': 0, 'question_id': question_id, 'message': request.form.get('message'), 'image': None,
+              'user_id': user_id}
     adh.add_answer(answer)
     return redirect(url_for("question", question_id=question_id))
 
@@ -175,11 +184,13 @@ def edit_answer(answer_id):
     user_id = users_dh.user_id()
     if request.method == 'GET':
         answer = adh.get_answer_by_answer_id(answer_id)
-        return render_template('edit-answer.html', answer=answer, is_logged_in=is_logged_in,message=users_dh.is_user_logged_in_message(),user_id=user_id)
+        return render_template('edit-answer.html', answer=answer, is_logged_in=is_logged_in,
+                               message=users_dh.is_user_logged_in_message(), user_id=user_id)
     if request.method == 'POST':
         message = request.form.get('message')
         question_id = adh.edit_answer(message, answer_id)
-        return redirect(url_for('question', question_id=question_id['question_id'], is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id))
+        return redirect(url_for('question', question_id=question_id['question_id'], is_logged_in=is_logged_in,
+                                message=users_dh.is_user_logged_in_message(), user_id=user_id))
 
 
 @app.route('/question/<question_id>/edit')
@@ -187,7 +198,8 @@ def edit_question_form(question_id):
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     question = qdh.get_question_by_id(question_id)
-    return render_template("edit-question.html", question=question, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id)
+    return render_template("edit-question.html", question=question, is_logged_in=is_logged_in,
+                           message=users_dh.is_user_logged_in_message(), user_id=user_id)
 
 
 @app.route('/question/<question_id>/edit', methods=['POST'])
@@ -269,17 +281,19 @@ def add_comment_to_question_form(question_id):
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     if is_logged_in:
-        return render_template('comment-to-question.html', question_id=question_id, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id)
+        return render_template('comment-to-question.html', question_id=question_id, is_logged_in=is_logged_in,
+                               message=users_dh.is_user_logged_in_message(), user_id=user_id)
     else:
-        return redirect(url_for("question", question_id=question_id, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id))
+        return redirect(url_for("question", question_id=question_id, is_logged_in=is_logged_in,
+                                message=users_dh.is_user_logged_in_message(), user_id=user_id))
 
 
 @app.route('/question/<question_id>/new-comment', methods=['POST'])
 def post_new_comment_to_question(question_id):
-    is_logged_in = session.get('is_logged_in')
     user = users_dh.get_user_id_by_login(session['user_login'])
     user_id = user['id']
-    comment = {'question_id': question_id, 'answer_id': None, 'message': request.form.get('message'), 'edited_count': 0, 'user_id':user_id}
+    comment = {'question_id': question_id, 'answer_id': None, 'message': request.form.get('message'), 'edited_count': 0,
+               'user_id': user_id}
     cdh.add_comments(comment)
     return redirect(url_for("question", question_id=question_id))
 
@@ -289,17 +303,21 @@ def add_comment_to_answer_form(answer_id):
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     if is_logged_in:
-        return render_template('comment-to-answer.html', answer_id=answer_id, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(),user_id=user_id)
+        return render_template('comment-to-answer.html', answer_id=answer_id, is_logged_in=is_logged_in,
+                               message=users_dh.is_user_logged_in_message(), user_id=user_id)
     else:
         answer = adh.get_answer_by_answer_id(answer_id)
-        return redirect(url_for("question", question_id=answer['question_id'], is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id))
+        return redirect(url_for("question", question_id=answer['question_id'], is_logged_in=is_logged_in,
+                                message=users_dh.is_user_logged_in_message(), user_id=user_id))
+
 
 @app.route('/answer/<answer_id>/new-comment', methods=['POST'])
 def post_new_comment_to_answer(answer_id):
     user = users_dh.get_user_id_by_login(session['user_login'])
     user_id = user['id']
     answer = adh.get_answer_by_answer_id(answer_id)
-    comment = {'question_id': None, 'answer_id': answer_id, 'message': request.form.get('message'), 'edited_count': 0, 'user_id':user_id}
+    comment = {'question_id': None, 'answer_id': answer_id, 'message': request.form.get('message'), 'edited_count': 0,
+               'user_id': user_id}
     cdh.add_comments(comment)
     return redirect(url_for("question", question_id=answer['question_id']))
 
@@ -309,7 +327,8 @@ def edit_comment_form(comment_id):
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     comment = cdh.get_comment_by_comment_id(comment_id)
-    return render_template('edit-comment.html', comment=comment, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id )
+    return render_template('edit-comment.html', comment=comment, is_logged_in=is_logged_in,
+                           message=users_dh.is_user_logged_in_message(), user_id=user_id)
 
 
 @app.route('/comment/<comment_id>/edit', methods=['POST'])
@@ -319,7 +338,7 @@ def edit_comment(comment_id):
     count = 1
     cdh.update_edit_counts(comment_id, count)
     question = cdh.get_question_id_by_comment_id(comment_id)
-    if question != None:
+    if question is not None:
         return redirect(url_for("question", question_id=question['question_id']))
     else:
         question = cdh.direct_to_question()
@@ -337,7 +356,8 @@ def render_tags(question_id):
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     tags = cdh.get_all_tags()
-    return render_template("tags.html", tags=tags, question_id=question_id, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id)
+    return render_template("tags.html", tags=tags, question_id=question_id, is_logged_in=is_logged_in,
+                           message=users_dh.is_user_logged_in_message(), user_id=user_id)
 
 
 @app.route('/question/<question_id>/new-tag', methods=['POST'])
@@ -366,7 +386,8 @@ def search():
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     search_question = qdh.search_question(search)
-    return render_template("search.html", search_question=search_question, message=users_dh.is_user_logged_in_message(), user_id=user_id, is_logged_in=is_logged_in)
+    return render_template("search.html", search_question=search_question, message=users_dh.is_user_logged_in_message(),
+                           user_id=user_id, is_logged_in=is_logged_in)
 
 
 @app.route('/question/<question_id>/<tag_id>/delete_tag')
@@ -382,7 +403,8 @@ def users():
     user_id = users_dh.user_id()
     if is_logged_in:
         print(all_users)
-        return render_template('users.html', is_logged_in=is_logged_in,all_users=all_users, message=users_dh.is_user_logged_in_message(), user_id=user_id)
+        return render_template('users.html', is_logged_in=is_logged_in, all_users=all_users,
+                               message=users_dh.is_user_logged_in_message(), user_id=user_id)
     else:
         return redirect(url_for('main_page'))
 
@@ -395,15 +417,19 @@ def user_page(user_id):
     user_answers = users_dh.get_answer_by_user_id(user_id)
     user_comments = users_dh.get_comment_by_user_id(user_id)
     user_details = users_dh.get_user_details(user_id)
-    return render_template('user-page.html', user_details=user_details,user_name=user_name, user_questions=user_questions,
-                           user_answers=user_answers, user_comments=user_comments, user_id=user_id, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message())
+    return render_template('user-page.html', user_details=user_details, user_name=user_name,
+                           user_questions=user_questions,
+                           user_answers=user_answers, user_comments=user_comments, user_id=user_id,
+                           is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message())
+
 
 @app.route('/tag')
 def all_tags():
     is_logged_in = session.get('is_logged_in')
     user_id = users_dh.user_id()
     quantity_of_tags = cdh.get_quantity_of_tags()
-    return render_template('all-tags.html', quantity_of_tags=quantity_of_tags, is_logged_in=is_logged_in, message=users_dh.is_user_logged_in_message(), user_id=user_id)
+    return render_template('all-tags.html', quantity_of_tags=quantity_of_tags, is_logged_in=is_logged_in,
+                           message=users_dh.is_user_logged_in_message(), user_id=user_id)
 
 
 @app.route('/answer/<answer_id>', methods=['POST'])
@@ -416,10 +442,12 @@ def change_status_answer(answer_id):
         users_dh.reputation_for_accepted_answer_up(user_id)
     return redirect(url_for("question", question_id=question_id['question_id']))
 
+
 @app.route('/bonus_question')
 def bonus_question():
     questions = bonus_questions.SAMPLE_QUESTIONS
     return render_template("bonus_questions.html", questions=questions)
+
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
