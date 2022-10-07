@@ -32,9 +32,6 @@ def registration():
         else:
             msg = 'Already have an account?'
             return render_template('registration.html', msg=msg)
-    # elif request.method == 'POST':
-    #     msg = 'Please fill out the form!'
-
     return render_template('main-page.html', msg=msg)
 
 
