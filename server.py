@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from data_handler import user_data_handler
 from data_handler import question_dh as qdh
 from data_handler import comment_and_tags_dh as cdh
 from data_handler import answer_dh as adh
@@ -20,15 +19,15 @@ def registration():
     if 'password' in request.form and 'email' in request.form:
         email = request.form['email']
         password = request.form['password']
-        hashed_password = user_data_handler.hash_password(password)
-        emails = user_data_handler.get_emails()
-        verify = user_data_handler.check_email(emails, email)
+        hashed_password = users_dh.hash_password(password)
+        emails = users_dh.get_emails()
+        verify = users_dh.check_email(emails, email)
         if verify:
-            user_data_handler.add_logged_users(email, hashed_password)
+            users_dh.add_logged_users(email, hashed_password)
             user = users_dh.get_user_id_by_login(request.form['email'])
             user_id = user['id']
             user= {'user_id': user_id, 'num_of_asked_questions':0,'num_of_answers': 0, 'num_of_comments': 0,'reputation': 0, }
-            user_data_handler.add_user_details(user)
+            users_dh.add_user_details(user)
             return redirect(url_for('main_page'))
         else:
             msg = 'Already have an account?'
@@ -95,8 +94,8 @@ def get_login():
     user_login = request.form.get("email")
     user_password = request.form.get("password")
     logins_and_passwords = users_dh.get_login_and_password()
-    hashed_password = user_data_handler.hash_password(user_password)
-    verify_password = user_data_handler.verify_password(user_password, hashed_password)
+    hashed_password = users_dh.hash_password(user_password)
+    verify_password = users_dh.verify_password(user_password, hashed_password)
 
     for element in logins_and_passwords:
         if user_login == format(element['login']):
